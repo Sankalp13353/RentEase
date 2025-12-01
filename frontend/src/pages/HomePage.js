@@ -38,18 +38,14 @@ export default function HomePage() {
     setMenu(false);
   };
 
+  // ✅ FIXED LOGIC (Redirect both roles to dashboard)
   const handleGetStarted = () => {
     if (!user) {
       navigate("/signup");
       return;
     }
 
-    // Owners → owner dashboard, Tenants → browse page
-    if (user.role === "Owner") {
-      navigate("/my-houses");
-    } else {
-      navigate("/browse");
-    }
+    navigate("/dashboard"); // ⭐ Always go to dashboard
   };
 
   return (

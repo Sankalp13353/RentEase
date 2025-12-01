@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const { prisma } = require("../config/database");
 
 /* ============================================================
-   CREATE USER VALIDATION
+   CREATE USER VALIDATION - RentEase Version
 ============================================================ */
 async function createUserMiddleware(req, res, next) {
     let { name, username, email, password, confirm_password, role } = req.body;
@@ -39,7 +39,13 @@ async function createUserMiddleware(req, res, next) {
         return res.status(400).json({ ERROR: "Name should contain only letters & spaces" });
     }
 
-    if (!role) role = "Client";
+    // Default role is Tenant
+    if (!role) role = "Tenant";
+
+    // Validate role against ENUM
+    if (!["Owner", "Tenant", "Admin"].includes(role)) {
+        return res.status(400).json({ ERROR: "Invalid role" });
+    }
 
     try {
         const existingUser = await prisma.user.findFirst({
@@ -78,7 +84,7 @@ async function loginUserMiddleware(req, res, next) {
 }
 
 /* ============================================================
-   LOGOUT VALIDATION  (RESTORED)
+   LOGOUT VALIDATION
 ============================================================ */
 async function logoutUserMiddleware(req, res, next) {
     const authHeader = req.headers.authorization;
@@ -91,7 +97,7 @@ async function logoutUserMiddleware(req, res, next) {
 }
 
 /* ============================================================
-   AUTH MIDDLEWARE (CRITICAL)
+   AUTH MIDDLEWARE
 ============================================================ */
 async function authMiddleware(req, res, next) {
     const authHeader = req.headers.authorization;
@@ -121,43 +127,26 @@ async function authMiddleware(req, res, next) {
 }
 
 /* ============================================================
-   UPDATE USER PROFILE VALIDATION
+   UPDATE USER VALIDATION - RentEase Version
 ============================================================ */
 async function updateUserMiddleware(req, res, next) {
-    let {
-        name,
-        username,
-        age,
-        gender,
-        city,
-        experience,
-        organization,
-        aboutOrg,
-        skills,
-        portfolio_url,
-        email,
-        password,
-        role,
-    } = req.body;
+    let { name, username } = req.body;
 
-    if (email || password || role) {
+    // Only these fields are allowed in RentEase
+    const allowedFields = ["name", "username"];
+
+    const providedFields = Object.keys(req.body);
+
+    // Check for disallowed fields
+    const invalidFields = providedFields.filter(f => !allowedFields.includes(f));
+
+    if (invalidFields.length > 0) {
         return res.status(400).json({
-            ERROR: "Email, password, and role cannot be updated.",
+            ERROR: `You cannot update: ${invalidFields.join(", ")}`,
         });
     }
 
-    if (
-        !name &&
-        !username &&
-        !age &&
-        !gender &&
-        !city &&
-        !experience &&
-        !organization &&
-        !aboutOrg &&
-        !skills &&
-        !portfolio_url
-    ) {
+    if (!name && !username) {
         return res.status(400).json({
             ERROR: "Provide at least one field to update.",
         });
@@ -182,26 +171,7 @@ async function updateUserMiddleware(req, res, next) {
         }
     }
 
-    if (age && isNaN(Number(age))) {
-        return res.status(400).json({ ERROR: "Age must be a number" });
-    }
-
-    if (experience && isNaN(Number(experience))) {
-        return res.status(400).json({ ERROR: "Experience must be a number" });
-    }
-
-    req.body = {
-        name,
-        username,
-        age,
-        gender,
-        city,
-        experience,
-        organization,
-        aboutOrg,
-        skills,
-        portfolio_url,
-    };
+    req.body = { name, username };
 
     next();
 }
@@ -209,7 +179,7 @@ async function updateUserMiddleware(req, res, next) {
 module.exports = {
     createUserMiddleware,
     loginUserMiddleware,
-    logoutUserMiddleware, 
+    logoutUserMiddleware,
     updateUserMiddleware,
     authMiddleware,
 };
