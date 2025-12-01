@@ -34,7 +34,7 @@ const DashboardPage = () => {
       return;
     }
 
-    const savedTheme = localStorage.getItem("theme") || "dark";
+    const savedTheme = localStorage.getItem("theme") || "light";
     document.body.setAttribute("data-theme", savedTheme);
   }, [navigate]);
 
@@ -45,73 +45,63 @@ const DashboardPage = () => {
       
       {/* NAVBAR */}
       <nav className="navbar">
-        <h2>FreelanceHub</h2>
+        <h2>RentEasy</h2>
       </nav>
 
       {/* CONTENT */}
       <div className="dashboard-content">
         <h1>Welcome {user.name}</h1>
 
-        {role === "client" ? (
-          <p className="subtitle">Manage your freelance journey here.</p>
+        {role === "owner" ? (
+          <p className="subtitle">Manage your rental properties easily.</p>
         ) : (
-          <p className="subtitle">Explore projects and showcase your skills.</p>
+          <p className="subtitle">Find the perfect home for rent.</p>
         )}
 
-        {/* CLIENT DASHBOARD */}
-        {role === "client" && (
+        {/* OWNER DASHBOARD */}
+        {role === "owner" && (
           <div className="cards-container">
 
-            <div className="dash-card" onClick={() => navigate("/post-project")}>
-              <h3>➕ Post a Project</h3>
-              <p>Publish new freelance opportunities.</p>
+            <div className="dash-card" onClick={() => navigate("/add-property")}>
+              <h3>🏠 Add Property</h3>
+              <p>List a new house, room, or apartment for rent.</p>
             </div>
 
-            <div className="dash-card" onClick={() => navigate("/my-projects")}>
-              <h3>💼 My Projects</h3>
-              <p>Track your posted work.</p>
+            <div className="dash-card" onClick={() => navigate("/my-properties")}>
+              <h3>📋 My Properties</h3>
+              <p>View, edit, or remove properties you listed.</p>
             </div>
 
-            <div
-              className="dash-card"
-              onClick={() => navigate("/applied-freelancers")}
-            >
-              <h3>🧑‍💻 Applied Freelancers</h3>
-              <p>See who applied for your projects.</p>
+            <div className="dash-card" onClick={() => navigate("/tenants")}>
+              <h3>🧑‍🤝‍🧑 Tenants</h3>
+              <p>Track renters who booked your properties.</p>
             </div>
 
           </div>
         )}
 
-        {/* FREELANCER DASHBOARD */}
-        {role === "freelancer" && (
+        {/* TENANT DASHBOARD */}
+        {role === "tenant" && (
           <div className="cards-container">
 
-            {/* ⭐ Browse Jobs */}
-            <div className="dash-card" onClick={() => navigate("/browse")}>
-              <h3>🔍 Browse Jobs</h3>
-              <p>Find freelance jobs that match your skills.</p>
+            <div className="dash-card" onClick={() => navigate("/browse-properties")}>
+              <h3>🔍 Browse Properties</h3>
+              <p>Search rental houses and rooms.</p>
             </div>
 
-            {/* ⭐ My Applications */}
-            <div className="dash-card" onClick={() => navigate("/my-applications")}>
-              <h3>📄 My Applications</h3>
-              <p>Track your submitted job proposals.</p>
+            <div className="dash-card" onClick={() => navigate("/my-bookings")}>
+              <h3>📄 My Bookings</h3>
+              <p>View properties you requested or booked.</p>
             </div>
 
-            {/* You can activate this later */}
-            <div className="dash-card">
-              <h3>💼 My Projects</h3>
-              <p>Manage your active client work.</p>
-            </div>
-
-            <div className="dash-card">
-              <h3>🏆 Earnings</h3>
-              <p>Check your total freelancing earnings.</p>
+            <div className="dash-card" onClick={() => navigate("/rent-history")}>
+              <h3>🏦 Rent & Payment History</h3>
+              <p>Check past rent, dues, and payments.</p>
             </div>
 
           </div>
         )}
+
       </div>
     </div>
   );

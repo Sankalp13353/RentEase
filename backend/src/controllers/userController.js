@@ -1,6 +1,6 @@
 const { prisma } = require("../config/database");
 const { createToken } = require("../utils/auth");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 /* =========================================================
    CREATE USER
