@@ -8,7 +8,7 @@ const LoginForm = () => {
 
   const [credentials, setCredentials] = useState({
     email: "",
-    password: ""
+    password: "",
   });
 
   const [message, setMessage] = useState("");
@@ -24,14 +24,20 @@ const LoginForm = () => {
     const result = await loginUser(credentials);
 
     if (result.token) {
+      // Store token
       localStorage.setItem("token", result.token);
+
+      // Store role (Owner / Tenant) for conditional redirects later if needed
+      if (result.user?.role) {
+        localStorage.setItem("role", result.user.role);
+      }
+
       setMessage("Login successful! Redirecting...");
 
-      // 🔥 Redirect to HOME, not dashboard
+      // 🔥 Redirect to HOME PAGE
       setTimeout(() => {
-        navigate("/");  // redirect to homepage
+        navigate("/");
       }, 1200);
-
     } else {
       setMessage(result.ERROR || result.message || "Invalid credentials");
     }
@@ -41,7 +47,7 @@ const LoginForm = () => {
     <div className="login-container">
       <div className="login-card">
         <h2>Welcome Back</h2>
-        <p className="subtitle">Login to FreelanceHub and continue your journey.</p>
+        <p className="subtitle">Login to RentEasy and manage your rentals.</p>
 
         <form onSubmit={handleSubmit}>
           <input
