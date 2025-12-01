@@ -1,0 +1,23 @@
+/* Reset + Root */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Remove CRA default styles */
+.App {
+  width: 100%;
+  min-height: 100vh;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Prevent logo animation leftovers */
+.App-logo {
+  display: none;
+}
