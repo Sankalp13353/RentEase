@@ -3,17 +3,17 @@ const { createToken } = require("../utils/auth");
 const bcrypt = require("bcryptjs");
 
 /* =========================================================
-   CREATE USER
+   CREATE USER (OWNER / TENANT)
 ========================================================= */
 async function createUserController(req, res) {
-  let { name, username, email, password, role } = req.body;
+  let { name, username, email, password, role, phone, city, address } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Normalize role to match Prisma ENUM
+    // Prisma ENUM conversion
     const prismaRole =
-      role?.toLowerCase() === "freelancer" ? "Freelancer" : "Client";
+      role?.toLowerCase() === "owner" ? "Owner" : "Tenant";
 
     const newUser = await prisma.user.create({
       data: {
@@ -22,6 +22,11 @@ async function createUserController(req, res) {
         email: email.trim().toLowerCase(),
         password: hashedPassword,
         role: prismaRole,
+
+        // Rent specific fields
+        phone,
+        city,
+        address,
       },
       select: {
         id: true,
@@ -29,6 +34,9 @@ async function createUserController(req, res) {
         username: true,
         email: true,
         role: true,
+        phone: true,
+        city: true,
+        address: true,
         createdAt: true,
       },
     });
@@ -46,7 +54,7 @@ async function createUserController(req, res) {
 }
 
 /* =========================================================
-   LOGIN
+   LOGIN (OWNER / TENANT)
 ========================================================= */
 async function loginUserController(req, res) {
   let { email, username, password } = req.body;
@@ -72,11 +80,7 @@ async function loginUserController(req, res) {
 
     // Normalize role for frontend
     let normalizedRole =
-      user.role === "Freelancer"
-        ? "freelancer"
-        : user.role === "Admin"
-        ? "admin"
-        : "client";
+      user.role === "Owner" ? "owner" : "tenant";
 
     const payload = {
       id: user.id,
@@ -127,15 +131,12 @@ async function getMeController(req, res) {
         email: true,
         role: true,
 
-        // Extended profile fields
+        // Rent specific fields
         age: true,
         gender: true,
+        phone: true,
         city: true,
-        experience: true,
-        organization: true,
-        aboutOrg: true,
-        skills: true,
-        portfolio_url: true,
+        address: true,
 
         createdAt: true,
         updatedAt: true,
@@ -155,24 +156,13 @@ async function getMeController(req, res) {
 }
 
 /* =========================================================
-   UPDATE PROFILE (FULL VERSION)
+   UPDATE PROFILE
 ========================================================= */
 async function updateUserController(req, res) {
   try {
     const userId = req.user.id;
 
-    let {
-      name,
-      username,
-      age,
-      gender,
-      city,
-      experience,
-      organization,
-      aboutOrg,
-      skills,
-      portfolio_url,
-    } = req.body;
+    let { name, username, age, gender, phone, city, address } = req.body;
 
     const updateData = {};
 
@@ -180,22 +170,21 @@ async function updateUserController(req, res) {
     if (name) updateData.name = name.trim();
     if (username) updateData.username = username.trim().toLowerCase();
 
-    // EXTENDED FIELDS
+    // RENT BASED PROFILE FIELDS
     if (age) updateData.age = Number(age);
     if (gender) updateData.gender = gender;
+    if (phone) updateData.phone = phone;
     if (city) updateData.city = city;
-    if (experience) updateData.experience = Number(experience);
-    if (organization) updateData.organization = organization;
-    if (aboutOrg) updateData.aboutOrg = aboutOrg;
-    if (skills) updateData.skills = skills;
-    if (portfolio_url) updateData.portfolio_url = portfolio_url;
+    if (address) updateData.address = address;
 
     // No fields provided
     if (Object.keys(updateData).length === 0) {
-      return res.status(400).json({ ERROR: "No valid fields provided for update" });
+      return res
+        .status(400)
+        .json({ ERROR: "No valid fields provided for update" });
     }
 
-    // Username unique check
+    // Unique username check
     if (updateData.username) {
       const existingUser = await prisma.user.findFirst({
         where: {
@@ -211,7 +200,7 @@ async function updateUserController(req, res) {
       }
     }
 
-    // Update user
+    // Update
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: updateData,
@@ -224,12 +213,9 @@ async function updateUserController(req, res) {
 
         age: true,
         gender: true,
+        phone: true,
         city: true,
-        experience: true,
-        organization: true,
-        aboutOrg: true,
-        skills: true,
-        portfolio_url: true,
+        address: true,
 
         updatedAt: true,
       },
