@@ -1,39 +1,39 @@
 const { prisma } = require("../config/database");
 
 /* ============================================
-   CREATE PROJECT (Client)
+   CREATE PROPERTY (Owner)
 ============================================ */
-async function createProjectController(req, res) {
+async function createOwnerPropertyController(req, res) {
   try {
     const {
       title,
       description,
       budget_min,
       budget_max,
-      skills,
       deadline,
-      client_id
+      client_id,
+      status
     } = req.body;
 
-    if (!title || !description || !client_id) {
+    if (!title || !client_id) {
       return res.status(400).json({ ERROR: "Missing required fields" });
     }
 
-    const project = await prisma.project.create({
+    const property = await prisma.owner.create({
       data: {
         title,
         description,
         budget_min: budget_min ? Number(budget_min) : null,
         budget_max: budget_max ? Number(budget_max) : null,
-        skills: skills || null,
         deadline: deadline ? new Date(deadline) : null,
+        status: status || "ForSale",
         client_id: Number(client_id)
       }
     });
 
-    return res.status(201).json({ message: "Project created", project });
+    return res.status(201).json({ message: "Property created", property });
   } catch (err) {
-    console.error("Create project error:", err);
+    console.error("Create property error:", err);
     return res.status(500).json({
       ERROR: "Internal Server Error",
       details: err.message
@@ -42,18 +42,18 @@ async function createProjectController(req, res) {
 }
 
 /* ============================================
-   GET ALL PROJECTS OF A CLIENT
+   GET ALL PROPERTIES OF A OWNER
 ============================================ */
-async function getClientProjectsController(req, res) {
+async function getOwnerPropertiesController(req, res) {
   try {
     const { clientId } = req.params;
 
-    const projects = await prisma.project.findMany({
+    const properties = await prisma.owner.findMany({
       where: { client_id: Number(clientId) },
       orderBy: { created_at: "desc" }
     });
 
-    return res.json({ projects });
+    return res.json({ properties });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ ERROR: "Internal Server Error" });
@@ -61,11 +61,11 @@ async function getClientProjectsController(req, res) {
 }
 
 /* ============================================
-   GET ALL PUBLIC PROJECTS (BROWSE JOBS)
+   GET ALL PUBLIC PROPERTIES
 ============================================ */
-async function getAllProjectsController(req, res) {
+async function getAllPropertiesController(req, res) {
   try {
-    const projects = await prisma.project.findMany({
+    const properties = await prisma.owner.findMany({
       orderBy: { created_at: "desc" },
       include: {
         client: {
@@ -74,10 +74,9 @@ async function getAllProjectsController(req, res) {
       }
     });
 
-    // Format for frontend
-    const formatted = projects.map((p) => ({
+    const formatted = properties.map((p) => ({
       ...p,
-      budget:
+      price:
         p.budget_min && p.budget_max
           ? `₹${p.budget_min} - ₹${p.budget_max}`
           : p.budget_min
@@ -85,35 +84,34 @@ async function getAllProjectsController(req, res) {
           : p.budget_max
           ? `₹${p.budget_max}`
           : null,
-
-      category: p.skills || "General"
+      category: "Real Estate"
     }));
 
-    return res.json({ projects: formatted });
+    return res.json({ properties: formatted });
   } catch (err) {
-    console.error("Get all projects error:", err);
+    console.error("Get properties error:", err);
     return res.status(500).json({ ERROR: "Internal Server Error" });
   }
 }
 
 /* ============================================
-   GET SINGLE PROJECT BY ID
+   GET SINGLE PROPERTY BY ID
 ============================================ */
-async function getProjectByIdController(req, res) {
+async function getPropertyByIdController(req, res) {
   try {
     const { id } = req.params;
 
-    const project = await prisma.project.findUnique({
+    const property = await prisma.owner.findUnique({
       where: { id: Number(id) },
       include: {
         client: { select: { id: true, name: true, username: true } }
       }
     });
 
-    if (!project)
-      return res.status(404).json({ ERROR: "Project not found" });
+    if (!property)
+      return res.status(404).json({ ERROR: "Property not found" });
 
-    return res.json({ project });
+    return res.json({ property });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ ERROR: "Internal Server Error" });
@@ -121,19 +119,19 @@ async function getProjectByIdController(req, res) {
 }
 
 /* ============================================
-   UPDATE PROJECT
+   UPDATE PROPERTY
 ============================================ */
-async function updateProjectController(req, res) {
+async function updatePropertyController(req, res) {
   try {
     const { id } = req.params;
     const tokenUser = req.user;
 
-    const existing = await prisma.project.findUnique({
+    const existing = await prisma.owner.findUnique({
       where: { id: Number(id) }
     });
 
     if (!existing)
-      return res.status(404).json({ ERROR: "Project not found" });
+      return res.status(404).json({ ERROR: "Property not found" });
 
     if (existing.client_id !== tokenUser.id)
       return res.status(403).json({ ERROR: "Forbidden" });
@@ -143,25 +141,23 @@ async function updateProjectController(req, res) {
       description,
       budget_min,
       budget_max,
-      skills,
       deadline,
       status
     } = req.body;
 
-    const updated = await prisma.project.update({
+    const updated = await prisma.owner.update({
       where: { id: Number(id) },
       data: {
         title,
         description,
         budget_min: budget_min ? Number(budget_min) : null,
         budget_max: budget_max ? Number(budget_max) : null,
-        skills,
         deadline: deadline ? new Date(deadline) : null,
         status
       }
     });
 
-    return res.json({ message: "Project updated", project: updated });
+    return res.json({ message: "Property updated", property: updated });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ ERROR: err.message });
@@ -169,28 +165,28 @@ async function updateProjectController(req, res) {
 }
 
 /* ============================================
-   DELETE PROJECT
+   DELETE PROPERTY
 ============================================ */
-async function deleteProjectController(req, res) {
+async function deletePropertyController(req, res) {
   try {
     const { id } = req.params;
     const tokenUser = req.user;
 
-    const existing = await prisma.project.findUnique({
+    const existing = await prisma.owner.findUnique({
       where: { id: Number(id) }
     });
 
     if (!existing)
-      return res.status(404).json({ ERROR: "Project not found" });
+      return res.status(404).json({ ERROR: "Property not found" });
 
     if (existing.client_id !== tokenUser.id)
       return res.status(403).json({ ERROR: "Forbidden" });
 
-    await prisma.project.delete({
+    await prisma.owner.delete({
       where: { id: Number(id) }
     });
 
-    return res.json({ message: "Project deleted" });
+    return res.json({ message: "Property deleted" });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ ERROR: err.message });
@@ -198,10 +194,10 @@ async function deleteProjectController(req, res) {
 }
 
 module.exports = {
-  createProjectController,
-  getClientProjectsController,
-  getAllProjectsController,
-  getProjectByIdController,
-  updateProjectController,
-  deleteProjectController
+  createOwnerPropertyController,
+  getOwnerPropertiesController,
+  getAllPropertiesController,
+  getPropertyByIdController,
+  updatePropertyController,
+  deletePropertyController
 };
