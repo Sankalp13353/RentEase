@@ -12,7 +12,7 @@ const SignupForm = () => {
     email: "",
     password: "",
     confirm_password: "",
-    role: "", // client or freelancer
+    role: "", // Owner or Tenant
   });
 
   const [message, setMessage] = useState("");
@@ -25,10 +25,10 @@ const SignupForm = () => {
 
     if (name === "role") {
       formattedValue =
-        value === "Client"
-          ? "client"
-          : value === "Freelancer"
-          ? "freelancer"
+        value === "Owner"
+          ? "Owner"
+          : value === "Tenant"
+          ? "Tenant"
           : "";
     }
 
@@ -68,7 +68,7 @@ const SignupForm = () => {
     <div className="signup-container">
       <div className="signup-card">
         <h2>Create your account</h2>
-        <p className="subtitle">Join FreelanceHub and start your journey.</p>
+        <p className="subtitle">Join RentEasy and start your journey.</p>
 
         {/* ROLE SELECTION */}
         <div className="role-selector">
@@ -76,20 +76,20 @@ const SignupForm = () => {
             <input
               type="radio"
               name="role"
-              value="Client"
+              value="Owner"
               onChange={handleChange}
             />
-            Client
+            Owner
           </label>
 
           <label>
             <input
               type="radio"
               name="role"
-              value="Freelancer"
+              value="Tenant"
               onChange={handleChange}
             />
-            Freelancer
+            Tenant
           </label>
         </div>
 
