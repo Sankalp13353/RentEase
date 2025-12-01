@@ -1,30 +1,27 @@
 const express = require("express");
 const corsMiddleware = require("./config/cors.js");
 const usersRouter = require("./routes/userRoute.js");
+const houseRoutes = require("./routes/housesRoute.js"); // updated
+
 require("dotenv").config();
-const projectRoutes = require("./routes/projectRoute");
-const proposalRoutes = require("./routes/proposalRoute");
-
-
 
 const app = express();
-const PORT = process.env.SERVER_PORT;
+const PORT = process.env.SERVER_PORT || 5000;
 
+// MIDDLEWARES
 app.use(corsMiddleware);
 app.use(express.json());
-app.use("/api/projects", projectRoutes);
-app.use("/api/proposals", proposalRoutes);
-app.use("/api/applications", require("./routes/applicationRoute"));
 
+// ROUTES
+app.use("/api/users", usersRouter);
+app.use("/api/houses", houseRoutes);
 
-
-
-app.use("/api/users", usersRouter)
-
+// HEALTH CHECK
 app.get("/", (req, res) => { 
-  res.status(200).send("<h1>Backend Running Successfully 🚀</h1>");
+  res.status(200).send("<h1>RentEase Backend Running Successfully 🚀</h1>");
 });
 
+// START SERVER
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`✅ Local Backend URL: ${process.env.BACKEND_LOCAL_URL}`);

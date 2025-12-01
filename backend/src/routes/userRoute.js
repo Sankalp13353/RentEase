@@ -1,12 +1,13 @@
-const express = require("express")
-const usersRouter = express.Router()
+const express = require("express");
+const usersRouter = express.Router();
 
 const {
     createUserMiddleware,
     loginUserMiddleware,
     logoutUserMiddleware,
     updateUserMiddleware,
-} = require("../middlewares/userMiddleware")
+    authMiddleware,
+} = require("../middlewares/userMiddleware");
 
 const {
     createUserController,
@@ -14,25 +15,28 @@ const {
     logoutUserController,
     getMeController,
     updateUserController,
-} = require("../controllers/userController")
+} = require("../controllers/userController");
 
-const { 
-    authenticate 
-} = require("../utils/auth")
+// REGISTER (Owner / Tenant)
+usersRouter.post("/register", createUserMiddleware, createUserController);
 
+// LOGIN (Owner / Tenant)
+usersRouter.post("/login", loginUserMiddleware, loginUserController);
 
-usersRouter.post("/register",createUserMiddleware,createUserController)
-usersRouter.post("/login",loginUserMiddleware,loginUserController)
-usersRouter.post('/logout',logoutUserMiddleware,logoutUserController)
-usersRouter.get("/me",authenticate,getMeController)
-usersRouter.put("/update", authenticate, updateUserMiddleware, updateUserController);
+// LOGOUT
+usersRouter.post("/logout", logoutUserMiddleware, logoutUserController);
 
-// Future addition ROUTES :-
-// /refresh
-// /change-password
-// /forgot-password
-// /reset-password/:token
-// /delete
+// GET MY PROFILE
+usersRouter.get("/me", authMiddleware, getMeController);
+
+// UPDATE PROFILE
+usersRouter.put("/update", authMiddleware, updateUserMiddleware, updateUserController);
+
+// Future routes (optional)
+// usersRouter.post("/refresh", ...);
+// usersRouter.post("/change-password", ...);
+// usersRouter.post("/forgot-password", ...);
+// usersRouter.post("/reset-password/:token", ...);
+// usersRouter.delete("/", ...);
 
 module.exports = usersRouter;
-  
