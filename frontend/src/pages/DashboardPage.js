@@ -5,12 +5,19 @@ import "./DashboardPage.css";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+
+  const [user, setUser] = useState({
+    id: "",
+    name: "",
+    email: "",
+    role: "",
+  });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+
     if (!token) {
-      navigate("/"); // redirect to home if not logged in
+      navigate("/");
       return;
     }
 
@@ -20,10 +27,10 @@ const DashboardPage = () => {
         id: decoded.id,
         name: decoded.name || "User",
         email: decoded.email,
-        role: decoded.role?.toLowerCase(), // normalize role
+        role: decoded.role,
       });
     } catch (err) {
-      navigate("/"); // invalid token
+      navigate("/");
       return;
     }
 
@@ -31,76 +38,73 @@ const DashboardPage = () => {
     document.body.setAttribute("data-theme", savedTheme);
   }, [navigate]);
 
-  if (!user) return null; // render nothing while loading
+  const role = user.role?.toLowerCase();
 
   return (
     <div className="dashboard-container">
+      
       {/* NAVBAR */}
       <nav className="navbar">
-        <h2>RentEasy</h2>
+        <h2>RentEase</h2>
       </nav>
 
-      {/* DASHBOARD CONTENT */}
+      {/* CONTENT */}
       <div className="dashboard-content">
         <h1>Welcome {user.name}</h1>
-        <p className="subtitle">
-          {user.role === "owner"
-            ? "Manage your rental properties easily."
-            : "Find the perfect home for rent."}
-        </p>
+
+        {role === "owner" ? (
+          <p className="subtitle">Manage your rental properties easily.</p>
+        ) : (
+          <p className="subtitle">Find the perfect home for rent.</p>
+        )}
 
         {/* OWNER DASHBOARD */}
-        {user.role === "owner" && (
+        {role === "owner" && (
           <div className="cards-container">
-            <DashboardCard
-              title="🏠 Add Property"
-              description="List a new house, room, or apartment for rent."
-              onClick={() => navigate("/add-property")}
-            />
-            <DashboardCard
-              title="📋 My Properties"
-              description="View, edit, or remove properties you listed."
-              onClick={() => navigate("/my-properties")}
-            />
-            <DashboardCard
-              title="🧑‍🤝‍🧑 Tenants"
-              description="Track renters who booked your properties."
-              onClick={() => navigate("/tenants")}
-            />
+
+            <div className="dash-card" onClick={() => navigate("/add-property")}>
+              <h3>🏠 Add Property</h3>
+              <p>List a new house, room, or apartment for rent.</p>
+            </div>
+
+            <div className="dash-card" onClick={() => navigate("/my-properties")}>
+              <h3>📋 My Properties</h3>
+              <p>View, edit, or remove properties you listed.</p>
+            </div>
+
+            <div className="dash-card" onClick={() => navigate("/tenants")}>
+              <h3>🧑‍🤝‍🧑 Tenants</h3>
+              <p>Track renters who booked your properties.</p>
+            </div>
+
           </div>
         )}
 
         {/* TENANT DASHBOARD */}
-        {user.role === "tenant" && (
+        {role === "tenant" && (
           <div className="cards-container">
-            <DashboardCard
-              title="🔍 Browse Properties"
-              description="Search rental houses and rooms."
-              onClick={() => navigate("/browse-properties")}
-            />
-            <DashboardCard
-              title="📄 My Bookings"
-              description="View properties you requested or booked."
-              onClick={() => navigate("/my-bookings")}
-            />
-            <DashboardCard
-              title="🏦 Rent & Payment History"
-              description="Check past rent, dues, and payments."
-              onClick={() => navigate("/rent-history")}
-            />
+
+            <div className="dash-card" onClick={() => navigate("/browse-properties")}>
+              <h3>🔍 Browse Properties</h3>
+              <p>Search rental houses and rooms.</p>
+            </div>
+
+            <div className="dash-card" onClick={() => navigate("/my-bookings")}>
+              <h3>📄 My Bookings</h3>
+              <p>View properties you requested or booked.</p>
+            </div>
+
+            <div className="dash-card" onClick={() => navigate("/rent-history")}>
+              <h3>🏦 Rent & Payment History</h3>
+              <p>Check past rent, dues, and payments.</p>
+            </div>
+
           </div>
         )}
+
       </div>
     </div>
   );
 };
-
-// Reusable dashboard card component
-const DashboardCard = ({ title, description, onClick }) => (
-  <div className="dash-card" onClick={onClick}>
-    <h3>{title}</h3>
-    <p>{description}</p>
-  </div>
-);
 
 export default DashboardPage;
