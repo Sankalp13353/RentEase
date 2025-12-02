@@ -1,25 +1,13 @@
 const { prisma } = require("../config/database");
 
-/* ============================================
-   CREATE HOUSE (OWNER ONLY)
-============================================ */
+/* CREATE HOUSE (OWNER ONLY) */
 async function createHouseController(req, res) {
   try {
     const ownerId = req.user.id;
     const {
-      title,
-      description,
-      address,
-      city,
-      state,
-      zipcode,
-      property_type,
-      bedrooms,
-      bathrooms,
-      area_sqft,
-      rent,
-      available_from,
-      amenities,
+      title, description, address, city, state, zipcode,
+      property_type, bedrooms, bathrooms, area_sqft,
+      rent, available_from, amenities
     } = req.body;
 
     if (!title || !address || !city || !state || !zipcode || !property_type) {
@@ -52,17 +40,13 @@ async function createHouseController(req, res) {
   }
 }
 
-/* ============================================
-   GET ALL HOUSES (FOR TENANTS TO BROWSE)
-============================================ */
+/* GET ALL HOUSES (FOR TENANTS) */
 async function getAllHousesController(req, res) {
   try {
     const houses = await prisma.house.findMany({
       where: { status: "ForSale" },
       orderBy: { created_at: "desc" },
-      include: {
-        owner: { select: { id: true, name: true, username: true } },
-      },
+      include: { owner: { select: { id: true, name: true, username: true } } },
     });
 
     return res.status(200).json({ houses });
@@ -72,14 +56,10 @@ async function getAllHousesController(req, res) {
   }
 }
 
-/* ============================================
-   GET HOUSES OF LOGGED-IN OWNER
-============================================ */
+/* GET LOGGED-IN OWNER HOUSES */
 async function getOwnerHousesController(req, res) {
   try {
-    const ownerId = Number(req.params.ownerId);
-
-    if (!ownerId) return res.status(400).json({ ERROR: "Owner ID required" });
+    const ownerId = req.user.id;
 
     const houses = await prisma.house.findMany({
       where: { owner_id: ownerId },
@@ -93,9 +73,7 @@ async function getOwnerHousesController(req, res) {
   }
 }
 
-/* ============================================
-   GET HOUSE BY ID
-============================================ */
+/* GET HOUSE BY ID */
 async function getHouseByIdController(req, res) {
   try {
     const { id } = req.params;
@@ -114,9 +92,7 @@ async function getHouseByIdController(req, res) {
   }
 }
 
-/* ============================================
-   UPDATE HOUSE (OWNER ONLY)
-============================================ */
+/* UPDATE HOUSE (OWNER ONLY) */
 async function updateHouseController(req, res) {
   try {
     const ownerId = req.user.id;
@@ -145,9 +121,7 @@ async function updateHouseController(req, res) {
   }
 }
 
-/* ============================================
-   DELETE HOUSE (OWNER ONLY)
-============================================ */
+/* DELETE HOUSE (OWNER ONLY) */
 async function deleteHouseController(req, res) {
   try {
     const ownerId = req.user.id;
@@ -169,7 +143,7 @@ async function deleteHouseController(req, res) {
 module.exports = {
   createHouseController,
   getAllHousesController,
-  getOwnerHousesController, 
+  getOwnerHousesController,
   getHouseByIdController,
   updateHouseController,
   deleteHouseController,

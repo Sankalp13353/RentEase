@@ -1,7 +1,8 @@
 const express = require("express");
 const corsMiddleware = require("./config/cors.js");
 const usersRouter = require("./routes/userRoute.js");
-const houseRoutes = require("./routes/housesRoute.js"); // updated
+const houseRoutes = require("./routes/housesRoute.js"); 
+
 
 require("dotenv").config();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 // ROUTES
 app.use("/api/users", usersRouter);
 app.use("/api/houses", houseRoutes);
+
 
 // HEALTH CHECK
 app.get("/", (req, res) => { 

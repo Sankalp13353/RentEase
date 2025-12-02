@@ -6,11 +6,13 @@ import DashboardPage from "./pages/DashboardPage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+
+// OWNER PAGES
 import OwnerAddProperty from "./pages/OwnerAddProperty";
 import OwnerMyProperties from "./pages/OwnerMyProperties";
 import OwnerTenants from "./pages/OwnerTenants";
 
-// PRIVATE ROUTE
+// PRIVATE ROUTE COMPONENT
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem("token");
   return token ? children : <Navigate to="/login" replace />;
@@ -25,7 +27,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
 
-        {/* PROTECTED DASHBOARD ROUTE */}
+        {/* DASHBOARD - PROTECTED */}
         <Route
           path="/dashboard"
           element={
@@ -35,7 +37,7 @@ function App() {
           }
         />
 
-        {/* OWNER ADD PROPERTY */}
+        {/* OWNER FEATURES - PROTECTED */}
         <Route
           path="/add-property"
           element={
