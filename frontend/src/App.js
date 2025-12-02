@@ -6,7 +6,9 @@ import DashboardPage from "./pages/DashboardPage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
-import OwnerAddProperty from "./pages/OwnerAddProperty"; // NEW
+import OwnerAddProperty from "./pages/OwnerAddProperty";
+import OwnerMyProperties from "./pages/OwnerMyProperties";
+import OwnerTenants from "./pages/OwnerTenants";
 
 // PRIVATE ROUTE
 const PrivateRoute = ({ children }) => {
@@ -39,6 +41,22 @@ function App() {
           element={
             <PrivateRoute>
               <OwnerAddProperty />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/my-properties"
+          element={
+            <PrivateRoute>
+              <OwnerMyProperties />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/tenants"
+          element={
+            <PrivateRoute>
+              <OwnerTenants />
             </PrivateRoute>
           }
         />
