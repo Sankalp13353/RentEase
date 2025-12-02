@@ -6,14 +6,18 @@ const bcrypt = require("bcryptjs");
    CREATE USER (OWNER / TENANT)
 ========================================================= */
 async function createUserController(req, res) {
-  let { name, username, email, password, role, phone, city, address } = req.body;
+  let { name, username, email, password, role } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Prisma ENUM conversion
     const prismaRole =
-      role?.toLowerCase() === "owner" ? "Owner" : "Tenant";
+      role?.toLowerCase() === "owner"
+        ? "Owner"
+        : role?.toLowerCase() === "admin"
+        ? "Admin"
+        : "Tenant";
 
     const newUser = await prisma.user.create({
       data: {
@@ -22,11 +26,6 @@ async function createUserController(req, res) {
         email: email.trim().toLowerCase(),
         password: hashedPassword,
         role: prismaRole,
-
-        // Rent specific fields
-        phone: phone ?? null,
-        city: city ?? null,
-        address: address ?? null,
       },
       select: {
         id: true,
@@ -34,9 +33,6 @@ async function createUserController(req, res) {
         username: true,
         email: true,
         role: true,
-        phone: true,
-        city: true,
-        address: true,
         createdAt: true,
       },
     });
@@ -78,16 +74,12 @@ async function loginUserController(req, res) {
       return res.status(401).json({ ERROR: "Invalid credentials" });
     }
 
-    // Normalize role for frontend
-    let normalizedRole =
-      user.role === "Owner" ? "owner" : "tenant";
-
     const payload = {
       id: user.id,
       name: user.name,
-      email: user.email,
       username: user.username,
-      role: normalizedRole,
+      email: user.email,
+      role: user.role.toLowerCase(),
     };
 
     const token = createToken(payload);
@@ -130,14 +122,6 @@ async function getMeController(req, res) {
         username: true,
         email: true,
         role: true,
-
-        // Rent specific fields
-        age: true,
-        gender: true,
-        phone: true,
-        city: true,
-        address: true,
-
         createdAt: true,
         updatedAt: true,
       },
@@ -162,26 +146,17 @@ async function updateUserController(req, res) {
   try {
     const userId = req.user.id;
 
-    let { name, username, age, gender, phone, city, address } = req.body;
+    let { name, username } = req.body;
 
     const updateData = {};
 
-    // BASIC
     if (name) updateData.name = name.trim();
     if (username) updateData.username = username.trim().toLowerCase();
 
-    // RENT BASED PROFILE FIELDS
-    if (age) updateData.age = Number(age);
-    if (gender) updateData.gender = gender;
-    if (phone) updateData.phone = phone;
-    if (city) updateData.city = city;
-    if (address) updateData.address = address;
-
-    // No fields provided
     if (Object.keys(updateData).length === 0) {
-      return res
-        .status(400)
-        .json({ ERROR: "No valid fields provided for update" });
+      return res.status(400).json({
+        ERROR: "No valid fields provided for update",
+      });
     }
 
     // Unique username check
@@ -200,7 +175,6 @@ async function updateUserController(req, res) {
       }
     }
 
-    // Update
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: updateData,
@@ -210,13 +184,6 @@ async function updateUserController(req, res) {
         username: true,
         email: true,
         role: true,
-
-        age: true,
-        gender: true,
-        phone: true,
-        city: true,
-        address: true,
-
         updatedAt: true,
       },
     });
