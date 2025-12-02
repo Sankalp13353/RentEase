@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { FaUserCircle, FaUser, FaSignOutAlt, FaSun, FaMoon } from "react-icons/fa";
 import "./HomePage.css";
-
-// ❗ Do NOT change this as per your request
-import ProfileCard from "/Users/sankalp/Desktop/FinalRent/frontend/src/pages/ProfileCard.js";
+import ProfileCard from "./ProfileCard";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -38,14 +36,12 @@ export default function HomePage() {
     setMenu(false);
   };
 
-  // ✅ FIXED LOGIC (Redirect both roles to dashboard)
   const handleGetStarted = () => {
     if (!user) {
       navigate("/signup");
       return;
     }
-
-    navigate("/dashboard"); // ⭐ Always go to dashboard
+    navigate("/dashboard");
   };
 
   return (
@@ -138,10 +134,11 @@ export default function HomePage() {
       {/* FOOTER */}
       <footer className="footer">
         <p>© 2025 RentEasy — Your Trusted Home Renting Partner</p>
-        <div>
-          <a href="#">Terms</a>
-          <a href="#">Privacy</a>
-          <a href="#">Support</a>
+
+        <div className="footer-links">
+          <Link to="/terms">Terms</Link>
+          <Link to="/privacy">Privacy</Link>
+          <Link to="/support">Support</Link>
         </div>
       </footer>
 
