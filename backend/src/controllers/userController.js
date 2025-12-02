@@ -24,9 +24,9 @@ async function createUserController(req, res) {
         role: prismaRole,
 
         // Rent specific fields
-        phone,
-        city,
-        address,
+        phone: phone ?? null,
+        city: city ?? null,
+        address: address ?? null,
       },
       select: {
         id: true,
