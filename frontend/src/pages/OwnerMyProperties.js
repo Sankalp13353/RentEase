@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
 import "./OwnerMyProperties.css";
 
-const API_BASE = process.env.REACT_APP_BACKEND_SERVER_URL;
+import baseApi, { deleteHouse } from "../api";
 
 const OwnerMyProperties = () => {
   const navigate = useNavigate();
@@ -12,10 +10,6 @@ const OwnerMyProperties = () => {
   const [loading, setLoading] = useState(true);
 
   const token = localStorage.getItem("token");
-
-  // Decode owner ID from token
-  const user = token ? jwtDecode(token) : null;
-  const ownerId = user?.id;
 
   useEffect(() => {
     if (!token) {
@@ -25,13 +19,8 @@ const OwnerMyProperties = () => {
 
     const fetchProperties = async () => {
       try {
-        const res = await axios.get(
-          `${API_BASE}/api/houses/owner/${ownerId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-
+        // Correct route for owner's houses
+        const res = await baseApi.get("/api/houses/my-properties");
         setProperties(res.data.houses || []);
       } catch (err) {
         console.error("Failed to fetch properties:", err.response?.data || err);
@@ -41,20 +30,19 @@ const OwnerMyProperties = () => {
     };
 
     fetchProperties();
-  }, [token, ownerId, navigate]);
+  }, [token, navigate]);
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this property?")) return;
 
-    try {
-      await axios.delete(`${API_BASE}/api/houses/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    const response = await deleteHouse(id);
 
-      setProperties((prev) => prev.filter((item) => item.id !== id));
-    } catch (err) {
-      console.error("Delete failed:", err.response?.data || err);
+    if (response.ERROR) {
+      console.error("Delete failed:", response.ERROR);
+      return;
     }
+
+    setProperties((prev) => prev.filter((item) => item.id !== id));
   };
 
   const handleEdit = (id) => navigate(`/edit-property/${id}`);
