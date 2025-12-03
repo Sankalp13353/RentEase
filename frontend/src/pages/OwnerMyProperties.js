@@ -19,7 +19,6 @@ const OwnerMyProperties = () => {
 
     const fetchProperties = async () => {
       try {
-        // Correct route for owner's houses
         const res = await baseApi.get("/api/houses/my-properties");
         setProperties(res.data.houses || []);
       } catch (err) {
@@ -45,8 +44,6 @@ const OwnerMyProperties = () => {
     setProperties((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const handleEdit = (id) => navigate(`/edit-property/${id}`);
-
   return (
     <div className="my-properties-container">
       <h1>My Properties</h1>
@@ -64,7 +61,7 @@ const OwnerMyProperties = () => {
               <p><strong>Rent:</strong> ₹{house.rent || "N/A"}</p>
 
               <div className="property-actions">
-                <button onClick={() => handleEdit(house.id)}>Edit</button>
+                {/* ❌ EDIT BUTTON REMOVED */}
                 <button onClick={() => handleDelete(house.id)}>Delete</button>
               </div>
             </div>
