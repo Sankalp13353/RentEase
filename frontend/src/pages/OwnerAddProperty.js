@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./OwnerAddProperty.css";
+import { createHouse } from "../api";
 
 const OwnerAddProperty = () => {
   const navigate = useNavigate();
@@ -19,7 +19,6 @@ const OwnerAddProperty = () => {
     area_sqft: "",
     rent: "",
     available_from: "",
-    amenities: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -35,48 +34,39 @@ const OwnerAddProperty = () => {
     setLoading(true);
     setError("");
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setError("You must be logged in to add a property");
+    const payload = {
+      title: formData.title,
+      description: formData.description || null,
+      address: formData.address,
+      city: formData.city,
+      state: formData.state,
+      zipcode: formData.zipcode,
+      property_type: formData.property_type,
+      bedrooms: Number(formData.bedrooms) || 0,
+      bathrooms: Number(formData.bathrooms) || 0,
+      area_sqft: Number(formData.area_sqft) || 0,
+      rent: formData.rent ? Number(formData.rent) : null,
+      available_from: formData.available_from || null,
+    };
+
+    const response = await createHouse(payload);
+
+    if (response.ERROR) {
+      setError(response.ERROR);
       setLoading(false);
       return;
     }
 
-    // Prepare payload with correct types
-    const payload = {
-      ...formData,
-      bedrooms: formData.bedrooms ? Number(formData.bedrooms) : 0,
-      bathrooms: formData.bathrooms ? Number(formData.bathrooms) : 0,
-      area_sqft: formData.area_sqft ? Number(formData.area_sqft) : 0,
-      rent: formData.rent ? Number(formData.rent) : null,
-      available_from: formData.available_from
-        ? new Date(formData.available_from)
-        : null,
-    };
-
-    try {
-      const res = await axios.post(
-        "https://freelancehub-1efa.onrender.com/api/houses/create",
-        payload,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      alert("Property added successfully!");
-      navigate("/my-properties"); // redirect to owner's properties
-    } catch (err) {
-      console.error("Add property failed:", err.response?.data || err.message);
-      setError(err.response?.data?.ERROR || "Failed to add property");
-    } finally {
-      setLoading(false);
-    }
+    alert("Property added successfully!");
+    navigate("/my-properties");
+    setLoading(false);
   };
 
   return (
     <div className="owner-add-property">
       <h2>Add New Property</h2>
       {error && <p className="error">{error}</p>}
+
       <form onSubmit={handleSubmit}>
         <label>Title:</label>
         <input name="title" value={formData.title} onChange={handleChange} required />
@@ -119,9 +109,6 @@ const OwnerAddProperty = () => {
 
         <label>Available From:</label>
         <input name="available_from" type="date" value={formData.available_from} onChange={handleChange} />
-
-        <label>Amenities:</label>
-        <input name="amenities" value={formData.amenities} onChange={handleChange} />
 
         <button type="submit" disabled={loading}>
           {loading ? "Adding..." : "Add Property"}

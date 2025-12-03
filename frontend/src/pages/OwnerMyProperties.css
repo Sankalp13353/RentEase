@@ -32,3 +32,47 @@
 .property-actions button:hover {
   opacity: 0.8;
 }
+.my-properties-container {
+  padding: 30px;
+}
+
+.properties-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.property-card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 7px rgba(0,0,0,0.15);
+}
+
+.property-card h3 {
+  margin: 0 0 10px;
+}
+
+.property-actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.edit-btn, .delete-btn {
+  padding: 8px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.edit-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+}

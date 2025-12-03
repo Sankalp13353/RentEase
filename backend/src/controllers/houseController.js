@@ -4,10 +4,11 @@ const { prisma } = require("../config/database");
 async function createHouseController(req, res) {
   try {
     const ownerId = req.user.id;
+
     const {
       title, description, address, city, state, zipcode,
       property_type, bedrooms, bathrooms, area_sqft,
-      rent, available_from, amenities
+      rent, available_from
     } = req.body;
 
     if (!title || !address || !city || !state || !zipcode || !property_type) {
@@ -29,14 +30,14 @@ async function createHouseController(req, res) {
         area_sqft: Number(area_sqft) || 0,
         rent: rent ? Number(rent) : null,
         available_from: available_from ? new Date(available_from) : null,
-        amenities: amenities || null,
       },
     });
 
     return res.status(201).json({ message: "House created successfully", house });
+
   } catch (err) {
     console.error("Create house error:", err);
-    return res.status(500).json({ ERROR: "Internal Server Error", details: err.message });
+    return res.status(500).json({ ERROR: err.message });
   }
 }
 
@@ -46,7 +47,9 @@ async function getAllHousesController(req, res) {
     const houses = await prisma.house.findMany({
       where: { status: "ForSale" },
       orderBy: { created_at: "desc" },
-      include: { owner: { select: { id: true, name: true, username: true } } },
+      include: {
+        owner: { select: { id: true, name: true, username: true } },
+      },
     });
 
     return res.status(200).json({ houses });
@@ -80,7 +83,9 @@ async function getHouseByIdController(req, res) {
 
     const house = await prisma.house.findUnique({
       where: { id: Number(id) },
-      include: { owner: { select: { id: true, name: true, username: true } } },
+      include: {
+        owner: { select: { id: true, name: true, username: true } },
+      },
     });
 
     if (!house) return res.status(404).json({ ERROR: "House not found" });
@@ -98,23 +103,49 @@ async function updateHouseController(req, res) {
     const ownerId = req.user.id;
     const { id } = req.params;
 
-    const existingHouse = await prisma.house.findUnique({ where: { id: Number(id) } });
-    if (!existingHouse) return res.status(404).json({ ERROR: "House not found" });
-    if (existingHouse.owner_id !== ownerId) return res.status(403).json({ ERROR: "Forbidden" });
+    const existingHouse = await prisma.house.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!existingHouse)
+      return res.status(404).json({ ERROR: "House not found" });
+
+    if (existingHouse.owner_id !== ownerId)
+      return res.status(403).json({ ERROR: "Forbidden" });
 
     const updateData = { ...req.body };
+
+    // Fix numeric fields
     if (updateData.bedrooms) updateData.bedrooms = Number(updateData.bedrooms);
     if (updateData.bathrooms) updateData.bathrooms = Number(updateData.bathrooms);
     if (updateData.area_sqft) updateData.area_sqft = Number(updateData.area_sqft);
     if (updateData.rent) updateData.rent = Number(updateData.rent);
-    if (updateData.available_from) updateData.available_from = new Date(updateData.available_from);
+
+    // Fix Date
+    if (updateData.available_from)
+      updateData.available_from = new Date(updateData.available_from);
+
+    // FIX amenities
+    if (updateData.amenities) {
+      if (Array.isArray(updateData.amenities)) {
+        updateData.amenities = updateData.amenities;
+      } else {
+        updateData.amenities = updateData.amenities
+          .split(",")
+          .map((a) => a.trim())
+          .filter((a) => a.length > 0);
+      }
+    }
 
     const updatedHouse = await prisma.house.update({
       where: { id: Number(id) },
       data: updateData,
     });
 
-    return res.status(200).json({ message: "House updated", house: updatedHouse });
+    return res
+      .status(200)
+      .json({ message: "House updated", house: updatedHouse });
+
   } catch (err) {
     console.error("Update house error:", err);
     return res.status(500).json({ ERROR: err.message });
@@ -127,13 +158,22 @@ async function deleteHouseController(req, res) {
     const ownerId = req.user.id;
     const { id } = req.params;
 
-    const existingHouse = await prisma.house.findUnique({ where: { id: Number(id) } });
-    if (!existingHouse) return res.status(404).json({ ERROR: "House not found" });
-    if (existingHouse.owner_id !== ownerId) return res.status(403).json({ ERROR: "Forbidden" });
+    const existingHouse = await prisma.house.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!existingHouse)
+      return res.status(404).json({ ERROR: "House not found" });
+
+    if (existingHouse.owner_id !== ownerId)
+      return res.status(403).json({ ERROR: "Forbidden" });
 
     await prisma.house.delete({ where: { id: Number(id) } });
 
-    return res.status(200).json({ message: "House deleted successfully" });
+    return res
+      .status(200)
+      .json({ message: "House deleted successfully" });
+
   } catch (err) {
     console.error("Delete house error:", err);
     return res.status(500).json({ ERROR: err.message });

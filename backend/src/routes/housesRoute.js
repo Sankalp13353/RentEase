@@ -1,11 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
+// Correct imports
 const { authMiddleware } = require("../middlewares/userMiddleware");
-const { ownerOnlyMiddleware, validatePropertyFields } = require("../middlewares/houseMiddleware");
+const {
+  ownerOnlyMiddleware,
+  validatePropertyFields,
+} = require("../middlewares/houseMiddleware");
+
 const houseController = require("../controllers/houseController");
 
-// CREATE HOUSE / PROPERTY (Owner only)
+// CREATE HOUSE (Owner only)
 router.post(
   "/create",
   authMiddleware,
@@ -14,10 +19,10 @@ router.post(
   houseController.createHouseController
 );
 
-// GET ALL PUBLIC HOUSES / PROPERTIES (Tenants browse)
+// GET ALL PUBLIC HOUSES
 router.get("/", houseController.getAllHousesController);
 
-// GET HOUSES OF LOGGED-IN OWNER
+// GET LOGGED-IN OWNER'S HOUSES
 router.get(
   "/my-properties",
   authMiddleware,
@@ -25,10 +30,10 @@ router.get(
   houseController.getOwnerHousesController
 );
 
-// GET SINGLE HOUSE / PROPERTY
+// GET SINGLE HOUSE
 router.get("/:id", houseController.getHouseByIdController);
 
-// UPDATE HOUSE / PROPERTY (Owner only)
+// UPDATE HOUSE (Owner only)
 router.put(
   "/:id",
   authMiddleware,
@@ -36,7 +41,7 @@ router.put(
   houseController.updateHouseController
 );
 
-// DELETE HOUSE / PROPERTY (Owner only)
+// DELETE HOUSE (Owner only)
 router.delete(
   "/:id",
   authMiddleware,
