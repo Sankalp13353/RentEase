@@ -7,19 +7,17 @@ import axios from "axios";
 const API_BASE_URL =
   process.env.NODE_ENV === "production"
     ? process.env.REACT_APP_BACKEND_SERVER_URL
-    : process.env.REACT_APP_BACKEND_LOCAL_URL
-    || "http://localhost:5001" ;
+    : process.env.REACT_APP_BACKEND_LOCAL_URL || "http://localhost:5001";
 
 /* ---------------------------------------------------
-   SINGLE AXIOS INSTANCE (base API URL) + AUTO TOKEN
-   Use this instance for all endpoints under API_BASE_URL
+   AXIOS INSTANCE (baseApi)
 --------------------------------------------------- */
 const baseApi = axios.create({
   baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
 });
 
-// attach token automatically
+// Attach token for ALL requests
 baseApi.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -30,7 +28,7 @@ baseApi.interceptors.request.use((config) => {
 });
 
 /* ===================================================
-   🔹 USER AUTH & PROFILE (paths under /api/users)
+   🔹 USER AUTH & PROFILE APIs
 =================================================== */
 export const signupUser = async (userData) => {
   try {
@@ -69,7 +67,7 @@ export const updateProfile = async (data) => {
 };
 
 /* ===================================================
-   🔹 PROJECT APIs  (/api/projects)
+   🔹 PROJECT APIs
 =================================================== */
 export const createProject = async (projectData) => {
   try {
@@ -108,7 +106,7 @@ export const fetchProjectById = async (id) => {
 };
 
 /* ===================================================
-   🔹 APPLICATION APIs (/api/applications)
+   🔹 APPLICATION APIs
 =================================================== */
 export const applyToProject = async ({ projectId, proposal, bid_amount }) => {
   try {
@@ -151,9 +149,10 @@ export const getFreelancersForProject = async (projectId) => {
 };
 
 /* ===================================================
-   🔹 HOUSES / PROPERTIES APIs (/api/houses)
-   (added — used by OwnerAddProperty component)
+   🔹 HOUSES / PROPERTIES APIs
 =================================================== */
+
+// CREATE HOUSE
 export const createHouse = async (houseData) => {
   try {
     const res = await baseApi.post("/api/houses/create", houseData);
@@ -163,16 +162,26 @@ export const createHouse = async (houseData) => {
   }
 };
 
-export const fetchHouses = async (query = "") => {
+// FETCH PUBLIC HOUSES (with query params)
+export const fetchHouses = async (params = {}) => {
   try {
-    // optional query string
-    const res = await baseApi.get(`/api/houses${query ? `?${query}` : ""}`);
+    const query = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        query.append(key, value);
+      }
+    });
+
+    const qs = query.toString();
+    const res = await baseApi.get(`/api/houses${qs ? `?${qs}` : ""}`);
     return res.data;
   } catch (err) {
     return err.response?.data || { ERROR: "Network error" };
   }
 };
 
+// FETCH HOUSE BY ID
 export const fetchHouseById = async (id) => {
   try {
     const res = await baseApi.get(`/api/houses/${id}`);
@@ -182,6 +191,7 @@ export const fetchHouseById = async (id) => {
   }
 };
 
+// UPDATE HOUSE
 export const updateHouse = async (id, houseData) => {
   try {
     const res = await baseApi.put(`/api/houses/${id}`, houseData);
@@ -191,6 +201,7 @@ export const updateHouse = async (id, houseData) => {
   }
 };
 
+// DELETE HOUSE
 export const deleteHouse = async (id) => {
   try {
     const res = await baseApi.delete(`/api/houses/${id}`);
@@ -200,8 +211,30 @@ export const deleteHouse = async (id) => {
   }
 };
 
+/* ===================================================
+   🔹 NEW: OWNER HOUSES (with search, sort, filters, pagination)
+=================================================== */
+
+export const fetchOwnerHouses = async (params = {}) => {
+  try {
+    const query = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        query.append(key, value);
+      }
+    });
+
+    const qs = query.toString();
+    const res = await baseApi.get(`/api/houses/my-properties${qs ? `?${qs}` : ""}`);
+
+    return res.data;
+  } catch (err) {
+    return err.response?.data || { ERROR: "Network error" };
+  }
+};
 
 /* ===================================================
-   Export default (optional)
+   Export baseApi by default
 =================================================== */
 export default baseApi;
