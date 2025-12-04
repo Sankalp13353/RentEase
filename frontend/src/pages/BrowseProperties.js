@@ -108,7 +108,6 @@ export default function BrowseProperties() {
         >
           <option value="created_at">Newest</option>
           <option value="rent">Rent</option>
-          <option value="title">Title</option>
         </select>
 
         <select
