@@ -10,13 +10,14 @@ import SignupPage from "./pages/SignupPage";
 // OWNER PAGES
 import OwnerAddProperty from "./pages/OwnerAddProperty";
 import OwnerMyProperties from "./pages/OwnerMyProperties";
-import OwnerTenants from "./pages/OwnerTenants";
-// Tenant page
+
+// NEW Incoming Interests page
+import OwnerIncomingInterests from "./pages/OwnerIncomingInterests"; 
+
+// TENANT PAGES
 import BrowseProperties from "./pages/BrowseProperties";
 import PropertyDetails from "./pages/PropertyDetails";
 import MyBookings from "./pages/MyBookings";
-
-
 
 
 // PRIVATE ROUTE COMPONENT
@@ -29,6 +30,7 @@ function App() {
   return (
     <Router>
       <Routes>
+
         {/* PUBLIC ROUTES */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -44,7 +46,7 @@ function App() {
           }
         />
 
-        {/* OWNER FEATURES - PROTECTED */}
+        {/* OWNER FEATURES */}
         <Route
           path="/add-property"
           element={
@@ -53,6 +55,7 @@ function App() {
             </PrivateRoute>
           }
         />
+
         <Route
           path="/my-properties"
           element={
@@ -61,23 +64,23 @@ function App() {
             </PrivateRoute>
           }
         />
+
+        {/* NEW: OWNER INCOMING INTERESTS PAGE */}
         <Route
           path="/tenants"
           element={
             <PrivateRoute>
-              <OwnerTenants />
+              <OwnerIncomingInterests />
             </PrivateRoute>
           }
         />
+
+        {/* TENANT PAGES */}
         <Route path="/browse-properties" element={<BrowseProperties />} />
         <Route path="/property/:id" element={<PropertyDetails />} />
         <Route path="/my-bookings" element={<MyBookings />} />
-        <Route path="/tenants" element={<OwnerIncomingInterests />} />
 
-
-
-
-        {/* FALLBACK ROUTE */}
+        {/* FALLBACK */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>

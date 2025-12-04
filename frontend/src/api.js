@@ -166,16 +166,11 @@ export const createHouse = async (houseData) => {
 export const fetchHouses = async (params = {}) => {
   try {
     const query = new URLSearchParams();
-
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== "") {
-        query.append(key, value);
-      }
+    Object.entries(params).forEach(([k, v]) => {
+      if (v !== undefined && v !== null && v !== "") query.append(k, v);
     });
-
     const qs = query.toString();
     const res = await baseApi.get(`/api/houses${qs ? `?${qs}` : ""}`);
-
     return res.data;
   } catch (err) {
     return err.response?.data || { ERROR: "Network error" };
@@ -213,22 +208,17 @@ export const deleteHouse = async (id) => {
 };
 
 /* ===================================================
-   🔹 OWNER HOUSES (filters + pagination)
+   🔹 OWNER HOUSES
 =================================================== */
 
 export const fetchOwnerHouses = async (params = {}) => {
   try {
     const query = new URLSearchParams();
-
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== "") {
-        query.append(key, value);
-      }
+    Object.entries(params).forEach(([k, v]) => {
+      if (v) query.append(k, v);
     });
-
     const qs = query.toString();
     const res = await baseApi.get(`/api/houses/my-properties${qs ? `?${qs}` : ""}`);
-
     return res.data;
   } catch (err) {
     return err.response?.data || { ERROR: "Network error" };
@@ -249,7 +239,7 @@ export const showInterest = async ({ houseId, message }) => {
   }
 };
 
-// Fetch tenant's own interests
+// Fetch tenant's interests
 export const fetchMyInterests = async () => {
   try {
     const res = await baseApi.get("/api/interests/my-interests");
@@ -260,9 +250,9 @@ export const fetchMyInterests = async () => {
 };
 
 // Cancel interest
-export const cancelInterest = async (interestId) => {
+export const cancelInterest = async (id) => {
   try {
-    const res = await baseApi.delete(`/api/interests/${interestId}`);
+    const res = await baseApi.delete(`/api/interests/${id}`);
     return res.data;
   } catch (err) {
     return err.response?.data || { ERROR: "Network error" };
@@ -270,13 +260,12 @@ export const cancelInterest = async (interestId) => {
 };
 
 /* ===================================================
-   🔹 OWNER — Incoming Tenant Interests
+   🔹 OWNER — Incoming Interests
 =================================================== */
 
-// Owner views all incoming interests
-export const fetchIncomingInterests = async () => {
+export const fetchOwnerInterests = async () => {
   try {
-    const res = await baseApi.get("/api/interests/incoming");
+    const res = await baseApi.get("/api/interests/owner");
     return res.data;
   } catch (err) {
     return err.response?.data || { ERROR: "Network error" };
@@ -284,6 +273,6 @@ export const fetchIncomingInterests = async () => {
 };
 
 /* ===================================================
-   Export Axios instance
+   Export Axios
 =================================================== */
 export default baseApi;
