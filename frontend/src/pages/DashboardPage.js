@@ -94,11 +94,6 @@ const DashboardPage = () => {
               <p>View properties you requested or booked.</p>
             </div>
 
-            <div className="dash-card" onClick={() => navigate("/rent-history")}>
-              <h3>🏦 Rent & Payment History</h3>
-              <p>Check past rent, dues, and payments.</p>
-            </div>
-
           </div>
         )}
 
