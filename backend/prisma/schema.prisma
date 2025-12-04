@@ -29,7 +29,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  houses    House[]  
+  houses    House[]
+
+  // 🔥 ADD THIS LINE → back relation to Interest
+  interests Interest[]
 }
 
 model House {
@@ -52,6 +55,8 @@ model House {
   updated_at     DateTime        @updatedAt
 
   owner          User            @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+
+  interests Interest[]
 }
 
 enum PropertyType {
@@ -60,4 +65,19 @@ enum PropertyType {
   Independent
   Studio
   Other
+}
+
+model Interest {
+  id         Int      @id @default(autoincrement())
+  tenant_id  Int
+  house_id   Int
+  message    String?
+  status     String    @default("Pending")
+  created_at DateTime  @default(now())
+
+  tenant User  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  house  House @relation(fields: [house_id], references: [id], onDelete: Cascade)
+
+  @@index([tenant_id])
+  @@index([house_id])
 }

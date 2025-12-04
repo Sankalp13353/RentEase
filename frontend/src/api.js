@@ -234,6 +234,37 @@ export const fetchOwnerHouses = async (params = {}) => {
   }
 };
 
+// Tenant shows interest in a house
+export const showInterest = async ({ houseId, message }) => {
+  try {
+    const res = await baseApi.post("/api/interests", { houseId, message });
+    return res.data;
+  } catch (err) {
+    return err.response?.data || { ERROR: "Network error" };
+  }
+};
+
+// Fetch logged-in tenant's interests
+export const fetchMyInterests = async () => {
+  try {
+    const res = await baseApi.get("/api/interests/my-interests");
+    return res.data;
+  } catch (err) {
+    return err.response?.data || { ERROR: "Network error" };
+  }
+};
+
+// Cancel interest
+export const cancelInterest = async (interestId) => {
+  try {
+    const res = await baseApi.delete(`/api/interests/${interestId}`);
+    return res.data;
+  } catch (err) {
+    return err.response?.data || { ERROR: "Network error" };
+  }
+};
+
+
 /* ===================================================
    Export baseApi by default
 =================================================== */

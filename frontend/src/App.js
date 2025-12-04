@@ -14,6 +14,8 @@ import OwnerTenants from "./pages/OwnerTenants";
 // Tenant page
 import BrowseProperties from "./pages/BrowseProperties";
 import PropertyDetails from "./pages/PropertyDetails";
+import MyBookings from "./pages/MyBookings";
+
 
 
 // PRIVATE ROUTE COMPONENT
@@ -68,6 +70,7 @@ function App() {
         />
         <Route path="/browse-properties" element={<BrowseProperties />} />
         <Route path="/property/:id" element={<PropertyDetails />} />
+        <Route path="/my-bookings" element={<MyBookings />} />
 
 
 

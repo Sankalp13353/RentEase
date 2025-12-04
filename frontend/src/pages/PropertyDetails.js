@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { fetchHouseById } from "../api";
-import { useParams } from "react-router-dom";
+import { fetchHouseById, showInterest } from "../api";   // 🔥 added showInterest
+import { useParams, useNavigate } from "react-router-dom"; // 🔥 added useNavigate
 import "./PropertyDetails.css";
 
 export default function PropertyDetails() {
   const { id } = useParams();
+  const navigate = useNavigate(); // 🔥 added
+
   const [house, setHouse] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingInterest, setLoadingInterest] = useState(false); // 🔥 added
 
   useEffect(() => {
     loadHouse();
@@ -24,8 +27,26 @@ export default function PropertyDetails() {
     setLoading(false);
   };
 
-  if (loading) return <p>Loading property details...</p>;
+  // 🔥 NEW: Show Interest Handler
+  const handleShowInterest = async () => {
+    if (!house) return;
 
+    setLoadingInterest(true);
+
+    const res = await showInterest({ houseId: house.id });
+
+    setLoadingInterest(false);
+
+    if (res.ERROR) {
+      alert(res.ERROR || "Failed to show interest");
+      return;
+    }
+
+    alert(res.message || "Interest created");
+    navigate("/my-bookings"); // 🔥 redirect
+  };
+
+  if (loading) return <p>Loading property details...</p>;
   if (!house) return <p>Property not found.</p>;
 
   return (
@@ -59,7 +80,14 @@ export default function PropertyDetails() {
         <p><strong>Name:</strong> {house.owner?.name}</p>
         <p><strong>Username:</strong> {house.owner?.username}</p>
 
-        <button className="interest-btn">Show Interest</button>
+        {/* 🔥 NEW BUTTON */}
+        <button
+          className="interest-btn"
+          onClick={handleShowInterest}
+          disabled={loadingInterest}
+        >
+          {loadingInterest ? "Sending..." : "Show Interest"}
+        </button>
 
       </div>
     </div>
