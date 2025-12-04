@@ -10,11 +10,7 @@ export default function BrowseProperties() {
 
   // Filters & search
   const [search, setSearch] = useState("");
-  const [city, setCity] = useState("");
   const [propertyType, setPropertyType] = useState("");
-  const [bedrooms, setBedrooms] = useState("");
-  const [minRent, setMinRent] = useState("");
-  const [maxRent, setMaxRent] = useState("");
 
   // Sorting
   const [sort, setSort] = useState("created_at");
@@ -22,7 +18,7 @@ export default function BrowseProperties() {
 
   // Pagination
   const [page, setPage] = useState(1);
-  const limit = 5; // number per page
+  const limit = 5; // default entries per page
   const [pagination, setPagination] = useState({ total: 0, totalPages: 1 });
 
   // Debounce search
@@ -38,11 +34,7 @@ export default function BrowseProperties() {
 
     const params = {
       search: debouncedSearch || undefined,
-      city: city || undefined,
       property_type: propertyType || undefined,
-      bedrooms: bedrooms || undefined,
-      minRent: minRent || undefined,
-      maxRent: maxRent || undefined,
       sort,
       order,
       page,
@@ -57,18 +49,7 @@ export default function BrowseProperties() {
     }
 
     setLoading(false);
-  }, [
-    debouncedSearch,
-    city,
-    propertyType,
-    bedrooms,
-    minRent,
-    maxRent,
-    sort,
-    order,
-    page,
-    limit,
-  ]);
+  }, [debouncedSearch, propertyType, sort, order, page, limit]);
 
   useEffect(() => {
     loadProperties();
@@ -76,11 +57,7 @@ export default function BrowseProperties() {
 
   const resetFilters = () => {
     setSearch("");
-    setCity("");
     setPropertyType("");
-    setBedrooms("");
-    setMinRent("");
-    setMaxRent("");
     setSort("created_at");
     setOrder("desc");
     setPage(1);
@@ -94,22 +71,13 @@ export default function BrowseProperties() {
 
       {/* FILTER BAR */}
       <div className="filters">
-        {/* SEARCH */}
+        
+        {/* MAIN SEARCH */}
         <input
           placeholder="Search title, city, address..."
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
-            setPage(1);
-          }}
-        />
-
-        {/* CITY */}
-        <input
-          placeholder="City"
-          value={city}
-          onChange={(e) => {
-            setCity(e.target.value);
             setPage(1);
           }}
         />
@@ -130,43 +98,7 @@ export default function BrowseProperties() {
           ))}
         </select>
 
-        {/* BEDROOMS */}
-        <select
-          value={bedrooms}
-          onChange={(e) => {
-            setBedrooms(e.target.value);
-            setPage(1);
-          }}
-        >
-          <option value="">Bedrooms</option>
-          <option value="1">1+</option>
-          <option value="2">2+</option>
-          <option value="3">3+</option>
-          <option value="4">4+</option>
-        </select>
-
-        {/* RENT RANGE */}
-        <input
-          type="number"
-          placeholder="Min Rent"
-          value={minRent}
-          onChange={(e) => {
-            setMinRent(e.target.value);
-            setPage(1);
-          }}
-        />
-
-        <input
-          type="number"
-          placeholder="Max Rent"
-          value={maxRent}
-          onChange={(e) => {
-            setMaxRent(e.target.value);
-            setPage(1);
-          }}
-        />
-
-        {/* SORT */}
+        {/* SORT OPTIONS */}
         <select
           value={sort}
           onChange={(e) => {
@@ -190,7 +122,6 @@ export default function BrowseProperties() {
           <option value="asc">Asc</option>
         </select>
 
-        {/* RESET BUTTON */}
         <button onClick={resetFilters}>Reset</button>
       </div>
 
@@ -213,6 +144,7 @@ export default function BrowseProperties() {
                 <p>
                   <strong>Rent:</strong> ₹{house.rent || "N/A"}
                 </p>
+
                 <p>
                   <strong>Bedrooms:</strong> {house.bedrooms}
                 </p>
