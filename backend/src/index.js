@@ -3,6 +3,8 @@ const corsMiddleware = require("./config/cors.js");
 const usersRouter = require("./routes/userRoute.js");
 const houseRoutes = require("./routes/housesRoute.js"); 
 const interestRoutes = require("./routes/interestRoutes");
+const interestRoutes = require("./routes/interestRoutes");
+
 
 
 require("dotenv").config();
@@ -18,6 +20,7 @@ app.use(express.json());
 app.use("/api/users", usersRouter);
 app.use("/api/houses", houseRoutes);
 
+app.use("/api/interests", interestRoutes);
 app.use("/api/interests", interestRoutes);
 
 

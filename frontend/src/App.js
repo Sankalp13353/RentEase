@@ -18,6 +18,7 @@ import MyBookings from "./pages/MyBookings";
 
 
 
+
 // PRIVATE ROUTE COMPONENT
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem("token");
