@@ -11,6 +11,10 @@ import SignupPage from "./pages/SignupPage";
 import OwnerAddProperty from "./pages/OwnerAddProperty";
 import OwnerMyProperties from "./pages/OwnerMyProperties";
 import OwnerTenants from "./pages/OwnerTenants";
+// Tenant page
+import BrowseProperties from "./pages/BrowseProperties";
+import PropertyDetails from "./pages/PropertyDetails";
+
 
 // PRIVATE ROUTE COMPONENT
 const PrivateRoute = ({ children }) => {
@@ -62,6 +66,10 @@ function App() {
             </PrivateRoute>
           }
         />
+        <Route path="/browse-properties" element={<BrowseProperties />} />
+        <Route path="/property/:id" element={<PropertyDetails />} />
+
+
 
         {/* FALLBACK ROUTE */}
         <Route path="*" element={<Navigate to="/" />} />
