@@ -30,4 +30,7 @@ router.get("/owner", authMiddleware, ownerOnlyMiddleware, getOwnerInterestsContr
 router.patch("/:id/approve", authMiddleware, ownerOnlyMiddleware, approveInterestController);
 router.patch("/:id/reject", authMiddleware, ownerOnlyMiddleware, rejectInterestController);
 
+router.get("/incoming",authMiddleware,ownerOnlyMiddleware,interestController.getIncomingInterests);
+
+
 module.exports = router;

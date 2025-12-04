@@ -1,10 +1,9 @@
 // controllers/interestController.js
 const { prisma } = require("../config/database");
 
-/**
- * Tenant shows interest in a house.
- * Prevent duplicate interest from same tenant -> returns existing interest if found.
- */
+/* =======================================================
+   TENANT → SHOW INTEREST
+======================================================= */
 async function createInterestController(req, res) {
   try {
     const tenantId = req.user.id;
@@ -14,13 +13,17 @@ async function createInterestController(req, res) {
       return res.status(400).json({ ERROR: "houseId is required" });
     }
 
-    // check house existence
-    const house = await prisma.house.findUnique({ where: { id: Number(houseId) } });
+    const house = await prisma.house.findUnique({
+      where: { id: Number(houseId) },
+    });
+
     if (!house) return res.status(404).json({ ERROR: "House not found" });
 
-    // prevent owner from showing interest on their own house
+    // owner cannot show interest on their own house
     if (house.owner_id === tenantId) {
-      return res.status(400).json({ ERROR: "Owners cannot show interest on their own property" });
+      return res
+        .status(400)
+        .json({ ERROR: "Owners cannot show interest on their own property" });
     }
 
     // prevent duplicate interest
@@ -29,7 +32,10 @@ async function createInterestController(req, res) {
     });
 
     if (existing) {
-      return res.status(200).json({ message: "Interest already exists", interest: existing });
+      return res.status(200).json({
+        message: "Interest already exists",
+        interest: existing,
+      });
     }
 
     const interest = await prisma.interest.create({
@@ -40,19 +46,19 @@ async function createInterestController(req, res) {
       },
     });
 
-    // (Optional) You can emit a websocket/event here so owner gets real-time notification
-
-    return res.status(201).json({ message: "Interest recorded", interest });
+    return res.status(201).json({
+      message: "Interest recorded",
+      interest,
+    });
   } catch (err) {
     console.error("Create interest error:", err);
     return res.status(500).json({ ERROR: "Internal Server Error" });
   }
 }
 
-/**
- * List logged-in tenant's interests
- * Include house and owner info — owner email will be present but frontend only displays owner.email if interest.status === "Approved"
- */
+/* =======================================================
+   TENANT → MY INTERESTS
+======================================================= */
 async function getMyInterestsController(req, res) {
   try {
     const tenantId = req.user.id;
@@ -63,7 +69,14 @@ async function getMyInterestsController(req, res) {
       include: {
         house: {
           include: {
-            owner: { select: { id: true, name: true, username: true, email: true } },
+            owner: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+                email: true, // shown directly
+              },
+            },
           },
         },
       },
@@ -76,22 +89,26 @@ async function getMyInterestsController(req, res) {
   }
 }
 
-/**
- * Cancel / delete an interest (tenant only)
- */
+/* =======================================================
+   TENANT → CANCEL INTEREST
+======================================================= */
 async function deleteInterestController(req, res) {
   try {
     const tenantId = req.user.id;
     const { id } = req.params;
 
-    const existing = await prisma.interest.findUnique({ where: { id: Number(id) } });
-    if (!existing) return res.status(404).json({ ERROR: "Interest not found" });
+    const existing = await prisma.interest.findUnique({
+      where: { id: Number(id) },
+    });
 
-    if (existing.tenant_id !== tenantId) {
+    if (!existing)
+      return res.status(404).json({ ERROR: "Interest not found" });
+
+    if (existing.tenant_id !== tenantId)
       return res.status(403).json({ ERROR: "Forbidden" });
-    }
 
     await prisma.interest.delete({ where: { id: Number(id) } });
+
     return res.status(200).json({ message: "Interest canceled" });
   } catch (err) {
     console.error("Delete interest error:", err);
@@ -99,22 +116,27 @@ async function deleteInterestController(req, res) {
   }
 }
 
-/* ===========================
-   Owner: list incoming interests
-   =========================== */
-async function getOwnerInterestsController(req, res) {
+/* =======================================================
+   OWNER → VIEW INCOMING INTERESTS
+======================================================= */
+async function getIncomingInterestsController(req, res) {
   try {
     const ownerId = req.user.id;
 
-    // find interests where house.owner_id == ownerId
     const interests = await prisma.interest.findMany({
       where: {
-        house: {
-          owner_id: ownerId,
-        },
+        house: { owner_id: ownerId },
       },
       orderBy: { created_at: "desc" },
       include: {
+        tenant: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+            email: true, // shown directly
+          },
+        },
         house: {
           select: {
             id: true,
@@ -124,99 +146,12 @@ async function getOwnerInterestsController(req, res) {
             rent: true,
           },
         },
-        tenant: {
-          select: {
-            id: true,
-            name: true,
-            username: true,
-            email: true, // we'll show in UI only once approved
-          },
-        },
       },
     });
 
     return res.status(200).json({ interests });
   } catch (err) {
-    console.error("Get owner interests error:", err);
-    return res.status(500).json({ ERROR: "Internal Server Error" });
-  }
-}
-
-/* ===========================
-   Owner: approve interest (reveal contact)
-   =========================== */
-async function approveInterestController(req, res) {
-  try {
-    const ownerId = req.user.id;
-    const { id } = req.params; // interest id
-
-    const existing = await prisma.interest.findUnique({
-      where: { id: Number(id) },
-      include: { house: true },
-    });
-
-    if (!existing) return res.status(404).json({ ERROR: "Interest not found" });
-
-    // verify owner owns the house for this interest
-    if (existing.house.owner_id !== ownerId) {
-      return res.status(403).json({ ERROR: "Forbidden" });
-    }
-
-    const updated = await prisma.interest.update({
-      where: { id: Number(id) },
-      data: { status: "Approved" },
-      include: {
-        tenant: { select: { id: true, name: true, username: true, email: true } },
-        house: {
-          include: {
-            owner: { select: { id: true, name: true, username: true, email: true } },
-          },
-        },
-      },
-    });
-
-    return res.status(200).json({ message: "Interest approved", interest: updated });
-  } catch (err) {
-    console.error("Approve interest error:", err);
-    return res.status(500).json({ ERROR: "Internal Server Error" });
-  }
-}
-
-/* ===========================
-   Owner: reject interest
-   =========================== */
-async function rejectInterestController(req, res) {
-  try {
-    const ownerId = req.user.id;
-    const { id } = req.params;
-
-    const existing = await prisma.interest.findUnique({
-      where: { id: Number(id) },
-      include: { house: true },
-    });
-
-    if (!existing) return res.status(404).json({ ERROR: "Interest not found" });
-
-    if (existing.house.owner_id !== ownerId) {
-      return res.status(403).json({ ERROR: "Forbidden" });
-    }
-
-    const updated = await prisma.interest.update({
-      where: { id: Number(id) },
-      data: { status: "Rejected" },
-      include: {
-        tenant: { select: { id: true, name: true, username: true, email: true } },
-        house: {
-          include: {
-            owner: { select: { id: true, name: true, username: true, email: true } },
-          },
-        },
-      },
-    });
-
-    return res.status(200).json({ message: "Interest rejected", interest: updated });
-  } catch (err) {
-    console.error("Reject interest error:", err);
+    console.error("Get incoming interests error:", err);
     return res.status(500).json({ ERROR: "Internal Server Error" });
   }
 }
@@ -225,7 +160,5 @@ module.exports = {
   createInterestController,
   getMyInterestsController,
   deleteInterestController,
-  getOwnerInterestsController,
-  approveInterestController,
-  rejectInterestController,
+  getIncomingInterestsController,
 };
