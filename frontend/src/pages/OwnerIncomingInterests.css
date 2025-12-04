@@ -1,0 +1,22 @@
+.incoming-container {
+  padding: 20px;
+}
+
+.incoming-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.incoming-card {
+  background: #fff;
+  padding: 18px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.time-stamp {
+  font-size: 13px;
+  color: #777;
+  margin-top: 8px;
+}
