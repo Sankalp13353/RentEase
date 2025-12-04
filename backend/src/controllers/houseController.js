@@ -38,7 +38,8 @@ async function createHouseController(req, res) {
 
   } catch (err) {
     console.error("Create house error:", err);
-    return res.status(500).json({ ERROR: err.message });
+    console.error("Request body was:", req.body);
+    return res.status(500).json({ ERROR: err.message, DETAILS: err.meta || "No additional details" });
   }
 }
 
