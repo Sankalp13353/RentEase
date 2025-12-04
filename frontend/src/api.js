@@ -17,7 +17,7 @@ const baseApi = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-// Attach token for ALL requests
+// Attach JWT token to every request
 baseApi.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -162,7 +162,7 @@ export const createHouse = async (houseData) => {
   }
 };
 
-// FETCH PUBLIC HOUSES (with query params)
+// FETCH PUBLIC HOUSES (supports filters, sorting, pagination)
 export const fetchHouses = async (params = {}) => {
   try {
     const query = new URLSearchParams();
@@ -175,6 +175,7 @@ export const fetchHouses = async (params = {}) => {
 
     const qs = query.toString();
     const res = await baseApi.get(`/api/houses${qs ? `?${qs}` : ""}`);
+
     return res.data;
   } catch (err) {
     return err.response?.data || { ERROR: "Network error" };
@@ -212,7 +213,7 @@ export const deleteHouse = async (id) => {
 };
 
 /* ===================================================
-   🔹 NEW: OWNER HOUSES (with search, sort, filters, pagination)
+   🔹 OWNER HOUSES — with filters, sort, pagination
 =================================================== */
 
 export const fetchOwnerHouses = async (params = {}) => {
@@ -234,6 +235,10 @@ export const fetchOwnerHouses = async (params = {}) => {
   }
 };
 
+/* ===================================================
+   🔹 TENANT INTEREST APIs
+=================================================== */
+
 // Tenant shows interest in a house
 export const showInterest = async ({ houseId, message }) => {
   try {
@@ -244,7 +249,7 @@ export const showInterest = async ({ houseId, message }) => {
   }
 };
 
-// Fetch logged-in tenant's interests
+// Fetch logged-in tenant's interest list
 export const fetchMyInterests = async () => {
   try {
     const res = await baseApi.get("/api/interests/my-interests");
@@ -254,7 +259,7 @@ export const fetchMyInterests = async () => {
   }
 };
 
-// Cancel interest
+// Cancel tenant interest
 export const cancelInterest = async (interestId) => {
   try {
     const res = await baseApi.delete(`/api/interests/${interestId}`);
@@ -264,8 +269,41 @@ export const cancelInterest = async (interestId) => {
   }
 };
 
+/* ===================================================
+   🔹 OWNER — Incoming Interests (Approve / Reject)
+=================================================== */
+
+// Owner views all incoming interests
+export const fetchOwnerInterests = async () => {
+  try {
+    const res = await baseApi.get("/api/interests/owner");
+    return res.data;
+  } catch (err) {
+    return err.response?.data || { ERROR: "Network error" };
+  }
+};
+
+// Owner approves interest (reveals email)
+export const approveInterest = async (interestId) => {
+  try {
+    const res = await baseApi.patch(`/api/interests/${interestId}/approve`);
+    return res.data;
+  } catch (err) {
+    return err.response?.data || { ERROR: "Network error" };
+  }
+};
+
+// Owner rejects interest
+export const rejectInterest = async (interestId) => {
+  try {
+    const res = await baseApi.patch(`/api/interests/${interestId}/reject`);
+    return res.data;
+  } catch (err) {
+    return err.response?.data || { ERROR: "Network error" };
+  }
+};
 
 /* ===================================================
-   Export baseApi by default
+   Export Axios instance
 =================================================== */
 export default baseApi;
