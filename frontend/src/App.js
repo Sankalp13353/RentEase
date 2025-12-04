@@ -72,6 +72,8 @@ function App() {
         <Route path="/browse-properties" element={<BrowseProperties />} />
         <Route path="/property/:id" element={<PropertyDetails />} />
         <Route path="/my-bookings" element={<MyBookings />} />
+        <Route path="/tenants" element={<OwnerIncomingInterests />} />
+
 
 
 

@@ -23,14 +23,30 @@ router.get("/my-interests", authMiddleware, getMyInterestsController);
 // DELETE /api/interests/:id -> tenant cancels interest
 router.delete("/:id", authMiddleware, deleteInterestController);
 
-// OWNER ROUTES (protected by ownerOnlyMiddleware)
-router.get("/owner", authMiddleware, ownerOnlyMiddleware, getOwnerInterestsController);
+// OWNER ROUTES
+router.get(
+  "/owner",
+  authMiddleware,
+  ownerOnlyMiddleware,
+  getOwnerInterestsController
+);
 
-// Approve / Reject interest (owner only)
-router.patch("/:id/approve", authMiddleware, ownerOnlyMiddleware, approveInterestController);
-router.patch("/:id/reject", authMiddleware, ownerOnlyMiddleware, rejectInterestController);
+// Owner approves interest
+router.patch(
+  "/:id/approve",
+  authMiddleware,
+  ownerOnlyMiddleware,
+  approveInterestController
+);
 
-router.get("/incoming",authMiddleware,ownerOnlyMiddleware,interestController.getIncomingInterests);
+// Owner rejects interest
+router.patch(
+  "/:id/reject",
+  authMiddleware,
+  ownerOnlyMiddleware,
+  rejectInterestController
+);
+
 
 
 module.exports = router;
