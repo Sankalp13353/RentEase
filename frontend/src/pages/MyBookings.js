@@ -50,7 +50,6 @@ export default function MyBookings() {
               <p>{it.house?.address}, {it.house?.city}</p>
               <p><strong>Rent:</strong> ₹{it.house?.rent || "N/A"}</p>
               <p><strong>Owner:</strong> {it.house?.owner?.name || it.house?.owner?.username}</p>
-              <p><strong>Requested At:</strong> {new Date(it.created_at).toLocaleString()}</p>
               <p><strong>Status:</strong> {it.status}</p>
 
               <div className="booking-actions">

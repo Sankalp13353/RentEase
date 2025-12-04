@@ -1,0 +1,76 @@
+.mybookings-container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+
+.mybookings-container h1 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #222;
+}
+
+.bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.booking-card {
+  background: #ffffff;
+  padding: 18px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.06);
+  transition: 0.2s ease;
+}
+
+.booking-card:hover {
+  transform: scale(1.01);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+.booking-card h3 {
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 20px;
+}
+
+.booking-card p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+/* Default Pending (yellow) */
+.status-pending {
+  background: #ffeb99;
+  color: #8a6d00;
+}
+
+/* Approved (green) */
+.status-approved {
+  background: #d4f7d4;
+  color: #1b7c1b;
+}
+
+/* Rejected (red) */
+.status-rejected {
+  background: #ffd6d6;
+  color: #a10000;
+}
+
+.empty-message {
+  text-align: center;
+  font-size: 18px;
+  color: #777;
+  margin-top: 40px;
+}
