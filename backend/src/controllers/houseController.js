@@ -1,7 +1,5 @@
-// controllers/houseController.js
 const { prisma } = require("../config/database");
 
-/* CREATE HOUSE (OWNER ONLY) */
 async function createHouseController(req, res) {
   try {
     const ownerId = req.user.id;
@@ -43,7 +41,7 @@ async function createHouseController(req, res) {
   }
 }
 
-/* Helper to build Prisma where object from query params */
+
 function buildWhereFromQuery({ search, city, property_type, status, owner_id }) {
   const where = {};
 
@@ -51,17 +49,15 @@ function buildWhereFromQuery({ search, city, property_type, status, owner_id }) 
     where.owner_id = Number(owner_id);
   }
 
-  // status filter (for public list usually)
+
   if (status) {
     where.status = status;
   }
 
-  // property type
   if (property_type) {
     where.property_type = property_type;
   }
 
-  // city filter (exact or contains)
   if (city) {
     where.city = { contains: city, mode: "insensitive" };
   }
