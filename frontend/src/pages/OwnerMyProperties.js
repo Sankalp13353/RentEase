@@ -1,14 +1,10 @@
-// src/pages/OwnerMyProperties.jsx
 import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import "./OwnerMyProperties.css";
-
 import { fetchOwnerHouses, deleteHouse } from "../api";
+import { Link } from "react-router-dom";
 
 const PROPERTY_TYPES = ["Apartment", "Villa", "Independent", "Studio", "Other"];
 
 export default function OwnerMyProperties() {
-  const navigate = useNavigate();
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -86,12 +82,16 @@ export default function OwnerMyProperties() {
   const totalPages = pagination.totalPages || 1;
 
   return (
-    <div className="my-properties-container">
-      <h1>My Properties</h1>
+    <div className="min-h-screen p-8 bg-brand-light text-brand-text-main duration-300 dark:bg-brand-dark dark:text-brand-text-dark">
+      <div className="max-w-7xl mx-auto">
 
-      {/* FILTERS ROW */}
-      <div className="controls">
-        <div className="control-row">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-brand-text-main dark:text-brand-text-dark">My Properties</h1>
+          <Link to="/dashboard" className="text-brand-primary font-medium hover:underline dark:text-brand-secondary">← Back to Dashboard</Link>
+        </div>
+
+        {/* FILTERS ROW */}
+        <div className="flex flex-wrap gap-4 mb-8 items-center bg-brand-surface-light p-5 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-gray-100 dark:bg-brand-surface-dark dark:border-white/5 dark:shadow-none">
 
           {/* Search Input */}
           <input
@@ -101,10 +101,8 @@ export default function OwnerMyProperties() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="search-input"
+            className="p-2.5 border border-gray-200 rounded-xl shadow-sm outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 transition bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary"
           />
-
-          {/* REMOVE CITY FIELD — removed */}
 
           {/* Property Type */}
           <select
@@ -113,14 +111,13 @@ export default function OwnerMyProperties() {
               setPropertyType(e.target.value);
               setPage(1);
             }}
+            className="p-2.5 border border-gray-200 rounded-xl shadow-sm outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 transition bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary [&>option]:text-black"
           >
             <option value="">All Types</option>
             {PROPERTY_TYPES.map((t) => (
               <option key={t} value={t}>{t}</option>
             ))}
           </select>
-
-          {/* REMOVE STATUS FILTER — removed */}
 
           {/* Sorting */}
           <select
@@ -129,6 +126,7 @@ export default function OwnerMyProperties() {
               setSort(e.target.value);
               setPage(1);
             }}
+            className="p-2.5 border border-gray-200 rounded-xl shadow-sm outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 transition bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary [&>option]:text-black"
           >
             <option value="created_at">Sort: Newest</option>
             <option value="rent">Sort: Rent</option>
@@ -141,70 +139,82 @@ export default function OwnerMyProperties() {
               setOrder(e.target.value);
               setPage(1);
             }}
+            className="p-2.5 border border-gray-200 rounded-xl shadow-sm outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 transition bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary [&>option]:text-black"
           >
             <option value="desc">Desc</option>
             <option value="asc">Asc</option>
           </select>
 
-          {/* REMOVE PAGE SIZE DROPDOWN — removed */}
-
-          <button onClick={handleResetFilters}>Reset</button>
+          <button
+            onClick={handleResetFilters}
+            className="px-5 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition text-sm font-medium dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+          >
+            Reset
+          </button>
         </div>
-      </div>
 
-      {/* LIST VIEW */}
-      {loading ? (
-        <p>Loading...</p>
-      ) : properties.length === 0 ? (
-        <p>No properties found.</p>
-      ) : (
-        <>
-          <div className="properties-list">
-            {properties.map((house) => (
-              <div key={house.id} className="property-card">
-                <h3>{house.title}</h3>
-                <p>{house.address}, {house.city}</p>
-                <p><strong>Rent:</strong> ₹{house.rent || "N/A"}</p>
+        {/* LIST VIEW */}
+        {loading ? (
+          <p className="text-brand-text-muted dark:text-brand-text-darkMuted text-center py-10">Loading...</p>
+        ) : properties.length === 0 ? (
+          <p className="text-brand-text-muted dark:text-brand-text-darkMuted text-center py-10">No properties found.</p>
+        ) : (
+          <>
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-6">
+              {properties.map((house) => (
+                <div key={house.id} className="bg-brand-surface-light p-6 rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition hover:shadow-lg border border-transparent dark:bg-brand-surface-dark dark:backdrop-blur-md dark:border-white/5 dark:shadow-none dark:hover:bg-white/5">
+                  <h3 className="text-xl font-bold mb-2 text-brand-text-main dark:text-brand-text-dark truncate">{house.title}</h3>
+                  <p className="text-sm text-brand-text-muted my-1 dark:text-brand-text-darkMuted">{house.address}, {house.city}</p>
+                  <div className="my-3 border-t border-gray-100 dark:border-white/10"></div>
+                  <p className="text-brand-text-main font-semibold my-1 dark:text-brand-text-dark">Expected Rent: <span className="text-brand-primary dark:text-brand-secondary">₹{house.rent || "N/A"}</span></p>
 
-                <div className="property-actions">
-                  <button onClick={() => handleDelete(house.id)}>Delete</button>
+                  <div className="flex gap-3 mt-5">
+                    <button
+                      onClick={() => handleDelete(house.id)}
+                      className="w-full px-4 py-2.5 bg-red-500/10 text-red-600 border border-red-200 rounded-xl hover:bg-red-500/20 hover:border-red-300 transition font-medium dark:bg-red-500/20 dark:text-red-400 dark:border-red-500/30 dark:hover:bg-red-500/30"
+                    >
+                      Delete Property
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* PAGINATION */}
-          <div className="pagination">
-            <button disabled={page <= 1} onClick={() => setPage(page - 1)}>
-              Prev
-            </button>
-
-            {/* Show page numbers */}
-            {[...Array(totalPages)].map((_, i) => {
-              const p = i + 1;
-              return (
-                <button
-                  key={p}
-                  onClick={() => setPage(p)}
-                  className={p === page ? "active" : ""}
-                >
-                  {p}
-                </button>
-              );
-            })}
-
-            <button disabled={page >= totalPages} onClick={() => setPage(page + 1)}>
-              Next
-            </button>
-
-            <div style={{ marginLeft: 12 }}>
-              <small>
-                Page {page} of {totalPages} — {pagination.total} items
-              </small>
+              ))}
             </div>
-          </div>
-        </>
-      )}
+
+            {/* PAGINATION */}
+            <div className="flex gap-2 mt-12 items-center justify-center">
+              <button
+                disabled={page <= 1}
+                onClick={() => setPage(page - 1)}
+                className="px-4 py-2 bg-brand-surface-light border border-gray-200 rounded-lg disabled:opacity-50 hover:bg-gray-50 text-sm font-medium dark:bg-white/5 dark:border-white/10 dark:text-white dark:hover:bg-white/10"
+              >
+                Previous
+              </button>
+
+              {/* Show page numbers */}
+              {[...Array(totalPages)].map((_, i) => {
+                const p = i + 1;
+                return (
+                  <button
+                    key={p}
+                    onClick={() => setPage(p)}
+                    className={`px-4 py-2 border rounded-lg text-sm font-medium transition ${p === page ? "bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/30 dark:bg-brand-secondary dark:text-brand-surface-dark dark:border-brand-secondary" : "bg-brand-surface-light border-gray-200 hover:bg-gray-50 dark:bg-white/5 dark:border-white/10 dark:text-white dark:hover:bg-white/10"}`}
+                  >
+                    {p}
+                  </button>
+                );
+              })}
+
+              <button disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="px-4 py-2 bg-brand-surface-light border border-gray-200 rounded-lg disabled:opacity-50 hover:bg-gray-50 text-sm font-medium dark:bg-white/5 dark:border-white/10 dark:text-white dark:hover:bg-white/10">
+                Next
+              </button>
+            </div>
+
+            <p className="text-center text-sm text-brand-text-muted mt-4 dark:text-brand-text-darkMuted">
+              Page {page} of {totalPages} — {pagination.total} items
+            </p>
+          </>
+        )}
+      </div>
     </div>
   );
 }
