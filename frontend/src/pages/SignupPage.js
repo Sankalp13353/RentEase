@@ -5,8 +5,8 @@ const SignupPage = () => {
   return (
     <div>
       <SignupForm />
-    </div>
-  );
+    </div>);
+
 };
 
 export default SignupPage;

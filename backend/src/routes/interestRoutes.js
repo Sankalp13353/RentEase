@@ -1,4 +1,4 @@
-// routes/interestRoutes.js
+
 const express = require("express");
 const router = express.Router();
 
@@ -11,19 +11,15 @@ const {
   deleteInterestController,
   getOwnerInterestsController,
   approveInterestController,
-  rejectInterestController,
+  rejectInterestController
 } = require("../controllers/interestController");
 
-// POST /api/interests -> tenant shows interest
 router.post("/", authMiddleware, createInterestController);
 
-// GET /api/interests/my-interests -> tenant's interests
 router.get("/my-interests", authMiddleware, getMyInterestsController);
 
-// DELETE /api/interests/:id -> tenant cancels interest
 router.delete("/:id", authMiddleware, deleteInterestController);
 
-// OWNER ROUTES
 router.get(
   "/owner",
   authMiddleware,
@@ -31,7 +27,6 @@ router.get(
   getOwnerInterestsController
 );
 
-// Owner approves interest
 router.patch(
   "/:id/approve",
   authMiddleware,
@@ -39,14 +34,11 @@ router.patch(
   approveInterestController
 );
 
-// Owner rejects interest
 router.patch(
   "/:id/reject",
   authMiddleware,
   ownerOnlyMiddleware,
   rejectInterestController
 );
-
-
 
 module.exports = router;

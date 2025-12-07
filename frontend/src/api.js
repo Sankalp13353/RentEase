@@ -1,23 +1,23 @@
-// src/api.js
+
 import axios from "axios";
 
-/* ---------------------------------------------------
-   BASE URL (LOCAL + PRODUCTION)
---------------------------------------------------- */
-const API_BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.REACT_APP_BACKEND_SERVER_URL
-    : process.env.REACT_APP_BACKEND_LOCAL_URL || "http://localhost:5001";
 
-/* ---------------------------------------------------
-   AXIOS INSTANCE (baseApi)
---------------------------------------------------- */
+
+
+const API_BASE_URL =
+process.env.NODE_ENV === "production" ?
+process.env.REACT_APP_BACKEND_SERVER_URL :
+process.env.REACT_APP_BACKEND_LOCAL_URL || "http://localhost:5001";
+
+
+
+
 const baseApi = axios.create({
   baseURL: API_BASE_URL,
-  headers: { "Content-Type": "application/json" },
+  headers: { "Content-Type": "application/json" }
 });
 
-// Attach JWT token automatically
+
 baseApi.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -27,9 +27,9 @@ baseApi.interceptors.request.use((config) => {
   return config;
 });
 
-/* ===================================================
-   🔹 USER AUTH & PROFILE APIs
-=================================================== */
+
+
+
 export const signupUser = async (userData) => {
   try {
     const res = await baseApi.post("/api/users/register", userData);
@@ -66,9 +66,9 @@ export const updateProfile = async (data) => {
   }
 };
 
-/* ===================================================
-   🔹 PROJECT APIs
-=================================================== */
+
+
+
 export const createProject = async (projectData) => {
   try {
     const res = await baseApi.post("/api/projects/create", projectData);
@@ -105,15 +105,15 @@ export const fetchProjectById = async (id) => {
   }
 };
 
-/* ===================================================
-   🔹 APPLICATION APIs
-=================================================== */
+
+
+
 export const applyToProject = async ({ projectId, proposal, bid_amount }) => {
   try {
     const res = await baseApi.post("/api/applications/apply", {
       projectId,
       proposal,
-      bid_amount,
+      bid_amount
     });
     return res.data;
   } catch (err) {
@@ -148,11 +148,11 @@ export const getFreelancersForProject = async (projectId) => {
   }
 };
 
-/* ===================================================
-   🔹 HOUSES / PROPERTIES APIs
-=================================================== */
 
-// CREATE HOUSE
+
+
+
+
 export const createHouse = async (houseData) => {
   try {
     const res = await baseApi.post("/api/houses/create", houseData);
@@ -162,7 +162,7 @@ export const createHouse = async (houseData) => {
   }
 };
 
-// FETCH PUBLIC HOUSES (with filters)
+
 export const fetchHouses = async (params = {}) => {
   try {
     const query = new URLSearchParams();
@@ -177,7 +177,7 @@ export const fetchHouses = async (params = {}) => {
   }
 };
 
-// FETCH HOUSE BY ID
+
 export const fetchHouseById = async (id) => {
   try {
     const res = await baseApi.get(`/api/houses/${id}`);
@@ -187,7 +187,7 @@ export const fetchHouseById = async (id) => {
   }
 };
 
-// UPDATE HOUSE
+
 export const updateHouse = async (id, houseData) => {
   try {
     const res = await baseApi.put(`/api/houses/${id}`, houseData);
@@ -197,7 +197,7 @@ export const updateHouse = async (id, houseData) => {
   }
 };
 
-// DELETE HOUSE
+
 export const deleteHouse = async (id) => {
   try {
     const res = await baseApi.delete(`/api/houses/${id}`);
@@ -207,9 +207,9 @@ export const deleteHouse = async (id) => {
   }
 };
 
-/* ===================================================
-   🔹 OWNER HOUSES
-=================================================== */
+
+
+
 
 export const fetchOwnerHouses = async (params = {}) => {
   try {
@@ -225,11 +225,11 @@ export const fetchOwnerHouses = async (params = {}) => {
   }
 };
 
-/* ===================================================
-   🔹 TENANT INTEREST APIs
-=================================================== */
 
-// Tenant shows interest
+
+
+
+
 export const showInterest = async ({ houseId, message }) => {
   try {
     const res = await baseApi.post("/api/interests", { houseId, message });
@@ -239,7 +239,7 @@ export const showInterest = async ({ houseId, message }) => {
   }
 };
 
-// Fetch tenant's interests
+
 export const fetchMyInterests = async () => {
   try {
     const res = await baseApi.get("/api/interests/my-interests");
@@ -249,7 +249,7 @@ export const fetchMyInterests = async () => {
   }
 };
 
-// Cancel interest
+
 export const cancelInterest = async (id) => {
   try {
     const res = await baseApi.delete(`/api/interests/${id}`);
@@ -259,9 +259,9 @@ export const cancelInterest = async (id) => {
   }
 };
 
-/* ===================================================
-   🔹 OWNER — Incoming Interests
-=================================================== */
+
+
+
 
 export const fetchOwnerInterests = async () => {
   try {
@@ -272,7 +272,7 @@ export const fetchOwnerInterests = async () => {
   }
 };
 
-/* ===================================================
-   Export Axios
-=================================================== */
+
+
+
 export default baseApi;
