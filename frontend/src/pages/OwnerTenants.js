@@ -36,12 +36,12 @@ const OwnerTenants = () => {
           <Link to="/dashboard" className="text-brand-primary font-medium hover:underline dark:text-brand-secondary">← Back to Dashboard</Link>
         </div>
 
-        {applications.length === 0 ? (
-          <p className="text-brand-text-muted text-lg dark:text-brand-text-darkMuted text-center py-10">No tenant applications yet.</p>
-        ) : (
-          <div className="flex flex-wrap gap-6 justify-center sm:justify-start">
-            {applications.map((app) => (
-              <div key={app.id} className="w-[300px] bg-brand-surface-light p-6 rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-transparent transition hover:shadow-lg dark:bg-brand-surface-dark dark:backdrop-blur-md dark:border-white/5 dark:shadow-none dark:hover:bg-white/5">
+        {applications.length === 0 ?
+        <p className="text-brand-text-muted text-lg dark:text-brand-text-darkMuted text-center py-10">No tenant applications yet.</p> :
+
+        <div className="flex flex-wrap gap-6 justify-center sm:justify-start">
+            {applications.map((app) =>
+          <div key={app.id} className="w-[300px] bg-brand-surface-light p-6 rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-transparent transition hover:shadow-lg dark:bg-brand-surface-dark dark:backdrop-blur-md dark:border-white/5 dark:shadow-none dark:hover:bg-white/5">
                 <h3 className="text-xl font-bold mb-2 text-brand-text-main dark:text-brand-text-dark">{app.tenantName}</h3>
                 <p className="text-sm text-brand-text-muted mb-1 dark:text-brand-text-darkMuted"><strong>Email:</strong> {app.tenantEmail}</p>
                 <p className="text-sm text-brand-text-muted mb-1 dark:text-brand-text-darkMuted"><strong>Property:</strong> {app.houseTitle}</p>
@@ -54,18 +54,18 @@ const OwnerTenants = () => {
                   </span>
                 </div>
 
-                {app.message && (
-                  <div className="mt-3 p-3 bg-gray-50 rounded-xl text-sm italic text-brand-text-muted border border-gray-100 dark:bg-white/5 dark:text-brand-text-darkMuted dark:border-white/5">
+                {app.message &&
+            <div className="mt-3 p-3 bg-gray-50 rounded-xl text-sm italic text-brand-text-muted border border-gray-100 dark:bg-white/5 dark:text-brand-text-darkMuted dark:border-white/5">
                     "{app.message}"
                   </div>
-                )}
+            }
               </div>
-            ))}
+          )}
           </div>
-        )}
+        }
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default OwnerTenants;

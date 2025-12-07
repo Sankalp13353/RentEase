@@ -26,7 +26,7 @@ export default function PropertyDetails() {
     loadHouse();
   }, [id]);
 
-  // 🔥 NEW: Show Interest Handler
+
   const handleShowInterest = async () => {
     if (!house) return;
 
@@ -72,12 +72,12 @@ export default function PropertyDetails() {
             <p><strong className="font-semibold text-brand-text-muted dark:text-brand-text-darkMuted block text-sm mb-1">Area</strong> {house.area_sqft} sq ft</p>
             <p><strong className="font-semibold text-brand-text-muted dark:text-brand-text-darkMuted block text-sm mb-1">Rent</strong> <span className="text-brand-primary font-bold dark:text-brand-secondary">₹{house.rent || "N/A"}</span></p>
 
-            {house.available_from && (
-              <p>
+            {house.available_from &&
+            <p>
                 <strong className="font-semibold text-brand-text-muted dark:text-brand-text-darkMuted block text-sm mb-1">Available From</strong>{" "}
                 {new Date(house.available_from).toLocaleDateString()}
               </p>
-            )}
+            }
           </div>
 
           <h3 className="text-2xl font-semibold mt-8 mb-6 pb-4 border-b border-gray-100 dark:border-white/10 dark:text-white">Owner Information</h3>
@@ -89,13 +89,13 @@ export default function PropertyDetails() {
           <button
             className="w-full mt-10 py-4 bg-brand-primary text-white text-lg rounded-xl font-bold hover:bg-brand-accent shadow-lg shadow-brand-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 dark:bg-brand-secondary dark:text-brand-surface-dark dark:hover:bg-white dark:shadow-none"
             onClick={handleShowInterest}
-            disabled={loadingInterest}
-          >
+            disabled={loadingInterest}>
+
             {loadingInterest ? "Sending Request..." : "Show Interest"}
           </button>
 
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }

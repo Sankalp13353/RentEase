@@ -47,14 +47,14 @@ export default function OwnerIncomingInterests() {
 
         {!loading && error && <p className="text-red-500 font-medium">{error}</p>}
 
-        {!loading && !error && interests.length === 0 && (
-          <p className="text-brand-text-muted dark:text-brand-text-darkMuted text-lg">No tenant has shown interest yet.</p>
-        )}
+        {!loading && !error && interests.length === 0 &&
+        <p className="text-brand-text-muted dark:text-brand-text-darkMuted text-lg">No tenant has shown interest yet.</p>
+        }
 
-        {!loading && !error && interests.length > 0 && (
-          <div className="flex flex-col gap-5 mt-4">
-            {interests.map((item) => (
-              <div key={item.id} className="bg-brand-surface-light p-6 rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-transparent transition hover:shadow-lg dark:bg-brand-surface-dark dark:backdrop-blur-md dark:border-white/5 dark:shadow-none">
+        {!loading && !error && interests.length > 0 &&
+        <div className="flex flex-col gap-5 mt-4">
+            {interests.map((item) =>
+          <div key={item.id} className="bg-brand-surface-light p-6 rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-transparent transition hover:shadow-lg dark:bg-brand-surface-dark dark:backdrop-blur-md dark:border-white/5 dark:shadow-none">
                 <h3 className="text-xl font-bold mb-2 text-brand-text-main dark:text-brand-text-dark">{item.house?.title || "Untitled property"}</h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-brand-text-muted dark:text-brand-text-darkMuted">
@@ -70,9 +70,9 @@ export default function OwnerIncomingInterests() {
 
                   <p>
                     <strong className="text-brand-text-main dark:text-brand-text-dark">Rent:</strong>{" "}
-                    {item.house?.rent !== null && item.house?.rent !== undefined
-                      ? `₹${item.house.rent}`
-                      : "N/A"}
+                    {item.house?.rent !== null && item.house?.rent !== undefined ?
+                `₹${item.house.rent}` :
+                "N/A"}
                   </p>
 
                   <p>
@@ -82,13 +82,13 @@ export default function OwnerIncomingInterests() {
 
                 <div className="mt-4 pt-4 border-t border-gray-100 dark:border-white/10 flex justify-between items-center text-xs text-brand-text-muted dark:text-brand-text-darkMuted">
                   <span>Received: {new Date(item.created_at).toLocaleString()}</span>
-                  {/* Could add action buttons here later if needed */}
+                  {}
                 </div>
               </div>
-            ))}
+          )}
           </div>
-        )}
+        }
       </div>
-    </div>
-  );
+    </div>);
+
 }

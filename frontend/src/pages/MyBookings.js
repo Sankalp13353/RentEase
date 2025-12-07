@@ -43,12 +43,12 @@ export default function MyBookings() {
           <Link to="/dashboard" className="text-brand-primary font-medium hover:underline dark:text-brand-secondary">← Back to Dashboard</Link>
         </div>
 
-        {interests.length === 0 ? (
-          <p className="text-center text-lg text-brand-text-muted dark:text-brand-text-darkMuted mt-10">You have not shown interest in any properties yet.</p>
-        ) : (
-          <div className="flex flex-col gap-6">
-            {interests.map((it) => (
-              <div key={it.id} className="bg-brand-surface-light p-6 rounded-2xl border border-transparent shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition duration-200 hover:scale-[1.01] hover:shadow-lg dark:bg-brand-surface-dark dark:border-white/5 dark:shadow-none">
+        {interests.length === 0 ?
+        <p className="text-center text-lg text-brand-text-muted dark:text-brand-text-darkMuted mt-10">You have not shown interest in any properties yet.</p> :
+
+        <div className="flex flex-col gap-6">
+            {interests.map((it) =>
+          <div key={it.id} className="bg-brand-surface-light p-6 rounded-2xl border border-transparent shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition duration-200 hover:scale-[1.01] hover:shadow-lg dark:bg-brand-surface-dark dark:border-white/5 dark:shadow-none">
 
                 <div className="flex justify-between items-start max-md:flex-col max-md:gap-4">
                   <div>
@@ -56,9 +56,9 @@ export default function MyBookings() {
                     <p className="text-brand-text-muted dark:text-brand-text-darkMuted mb-2">{it.house?.address}, {it.house?.city}</p>
                   </div>
                   <span className={`px-4 py-1.5 rounded-full text-sm font-bold border ${it.status === "Approved" ? "bg-green-100 text-green-700 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20" :
-                      it.status === "Rejected" ? "bg-red-100 text-red-700 border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20" :
-                        "bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-500/10 dark:text-yellow-400 dark:border-yellow-500/20"
-                    }`}>
+              it.status === "Rejected" ? "bg-red-100 text-red-700 border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20" :
+              "bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-500/10 dark:text-yellow-400 dark:border-yellow-500/20"}`
+              }>
                     {it.status}
                   </span>
                 </div>
@@ -73,39 +73,39 @@ export default function MyBookings() {
                     <span className="text-brand-text-muted dark:text-brand-text-darkMuted">Owner:</span> <strong className="ml-1">{it.house?.owner?.name || it.house?.owner?.username}</strong>
                   </p>
 
-                  {/* show owner contact only when approved */}
-                  {it.status === "Approved" ? (
-                    <div className="col-span-2 p-3 bg-green-50 rounded-lg border border-green-100 dark:bg-green-500/5 dark:border-green-500/10">
+                  {}
+                  {it.status === "Approved" ?
+              <div className="col-span-2 p-3 bg-green-50 rounded-lg border border-green-100 dark:bg-green-500/5 dark:border-green-500/10">
                       <p className="text-green-800 dark:text-green-300">
                         <strong>✨ Owner Email:</strong> {it.house?.owner?.email || "N/A"}
                       </p>
-                    </div>
-                  ) : (
-                    <p className="col-span-2 text-brand-text-muted dark:text-brand-text-darkMuted italic text-xs">
+                    </div> :
+
+              <p className="col-span-2 text-brand-text-muted dark:text-brand-text-darkMuted italic text-xs">
                       * Owner contact will be revealed when your request is approved.
                     </p>
-                  )}
+              }
                 </div>
 
                 <div className="flex gap-3 mt-6">
                   <button
-                    onClick={() => window.location.href = `/property/${it.house_id}`}
-                    className="px-5 py-2.5 bg-brand-primary text-white rounded-xl font-medium shadow-md shadow-brand-primary/20 hover:bg-brand-accent transition dark:bg-brand-secondary dark:text-brand-surface-dark dark:hover:bg-white"
-                  >
+                onClick={() => window.location.href = `/property/${it.house_id}`}
+                className="px-5 py-2.5 bg-brand-primary text-white rounded-xl font-medium shadow-md shadow-brand-primary/20 hover:bg-brand-accent transition dark:bg-brand-secondary dark:text-brand-surface-dark dark:hover:bg-white">
+
                     View Property
                   </button>
                   <button
-                    onClick={() => handleCancel(it.id)}
-                    className="px-5 py-2.5 bg-transparent border border-red-200 text-red-500 rounded-xl font-medium hover:bg-red-50 hover:border-red-300 transition dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10"
-                  >
+                onClick={() => handleCancel(it.id)}
+                className="px-5 py-2.5 bg-transparent border border-red-200 text-red-500 rounded-xl font-medium hover:bg-red-50 hover:border-red-300 transition dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10">
+
                     Cancel Request
                   </button>
                 </div>
               </div>
-            ))}
+          )}
           </div>
-        )}
+        }
       </div>
-    </div>
-  );
+    </div>);
+
 }

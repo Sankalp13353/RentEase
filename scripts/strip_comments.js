@@ -22,6 +22,12 @@ function removeCommentsFromText(content, ext) {
     content = content.replace(/<!--([\s\S]*?)-->/g, '');
     return content;
   }
+  if (ext === '.sql' || ext === '.prisma') {
+    // remove SQL / Prisma comments (/* */ and -- line comments)
+    content = content.replace(/\/\*[\s\S]*?\*\//g, '');
+    content = content.split(/\r?\n/).filter(l => !/^\s*--/.test(l)).join('\n');
+    return content;
+  }
   if (ext === '.env') {
     // remove lines starting with #
     return content.split(/\r?\n/).filter(l => !/^\s*#/.test(l)).join('\n');
@@ -76,7 +82,9 @@ function processFile(fullPath) {
   if (textExts.includes(ext)) {
     const newText = removeCommentsFromText(code, ext);
     if (newText !== code) {
-      fs.writeFileSync(fullPath, newText, 'utf8');
+      // remove leftover empty JSX expression containers on their own lines
+      const cleaned = newText.replace(/^[ \t]*{\s*}\s*$/mg, '');
+      fs.writeFileSync(fullPath, cleaned, 'utf8');
       return true;
     }
     return false;

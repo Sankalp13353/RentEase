@@ -7,7 +7,7 @@ const LoginForm = () => {
 
   const [credentials, setCredentials] = useState({
     email: "",
-    password: "",
+    password: ""
   });
 
   const [message, setMessage] = useState("");
@@ -23,17 +23,17 @@ const LoginForm = () => {
     const result = await loginUser(credentials);
 
     if (result.token) {
-      // Store token
+
       localStorage.setItem("token", result.token);
 
-      // Store role (Owner / Tenant) for conditional redirects later if needed
+
       if (result.user?.role) {
         localStorage.setItem("role", result.user.role);
       }
 
       setMessage("Login successful! Redirecting...");
 
-      // 🔥 Redirect to HOME PAGE
+
       setTimeout(() => {
         navigate("/");
       }, 1200);
@@ -57,8 +57,8 @@ const LoginForm = () => {
             value={credentials.email}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 mb-4 text-sm rounded-xl bg-white border border-gray-200 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary"
-          />
+            className="w-full px-4 py-3 mb-4 text-sm rounded-xl bg-white border border-gray-200 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary" />
+
 
           <input
             type="password"
@@ -67,13 +67,13 @@ const LoginForm = () => {
             value={credentials.password}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 mb-4 text-sm rounded-xl bg-white border border-gray-200 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary"
-          />
+            className="w-full px-4 py-3 mb-4 text-sm rounded-xl bg-white border border-gray-200 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary" />
+
 
           <button
             type="submit"
-            className="w-full p-3 text-[15px] font-bold bg-brand-primary text-white border-none rounded-xl cursor-pointer transition duration-300 hover:bg-brand-accent shadow-lg shadow-brand-primary/30 dark:bg-brand-secondary dark:text-brand-surface-dark dark:hover:bg-white dark:shadow-none"
-          >
+            className="w-full p-3 text-[15px] font-bold bg-brand-primary text-white border-none rounded-xl cursor-pointer transition duration-300 hover:bg-brand-accent shadow-lg shadow-brand-primary/30 dark:bg-brand-secondary dark:text-brand-surface-dark dark:hover:bg-white dark:shadow-none">
+
             Login
           </button>
         </form>
@@ -84,8 +84,8 @@ const LoginForm = () => {
           Don’t have an account? <a href="/signup" className="text-brand-primary font-semibold hover:underline dark:text-brand-secondary">Sign up here</a>
         </p>
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default LoginForm;

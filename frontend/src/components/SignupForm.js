@@ -11,7 +11,7 @@ const SignupForm = () => {
     email: "",
     password: "",
     confirm_password: "",
-    role: "", // Owner or Tenant
+    role: ""
   });
 
   const [message, setMessage] = useState("");
@@ -19,21 +19,21 @@ const SignupForm = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // 🔥 Convert UI role → backend role format
+
     let formattedValue = value;
 
     if (name === "role") {
       formattedValue =
-        value === "Owner"
-          ? "Owner"
-          : value === "Tenant"
-            ? "Tenant"
-            : "";
+      value === "Owner" ?
+      "Owner" :
+      value === "Tenant" ?
+      "Tenant" :
+      "";
     }
 
     setFormData((prev) => ({
       ...prev,
-      [name]: formattedValue,
+      [name]: formattedValue
     }));
   };
 
@@ -56,7 +56,7 @@ const SignupForm = () => {
       setMessage("Signup successful! Redirecting...");
 
       setTimeout(() => {
-        navigate("/"); // redirect to home page
+        navigate("/Login");
       }, 1200);
     } else {
       setMessage(result.ERROR || result.message || "Something went wrong");
@@ -70,7 +70,7 @@ const SignupForm = () => {
         <h2 className="text-2xl font-bold mb-2 text-brand-text-main dark:text-brand-text-dark">Create your account</h2>
         <p className="text-sm text-brand-text-muted mb-6 dark:text-brand-text-darkMuted">Join RentEasy and start your journey.</p>
 
-        {/* ROLE SELECTION */}
+        {}
         <div className="flex justify-center gap-6 mb-6">
           <label className="font-medium text-brand-text-main cursor-pointer flex items-center dark:text-brand-text-dark">
             <input
@@ -78,8 +78,8 @@ const SignupForm = () => {
               name="role"
               value="Owner"
               onChange={handleChange}
-              className="accent-brand-primary mr-2 scale-125 dark:accent-brand-secondary"
-            />
+              className="accent-brand-primary mr-2 scale-125 dark:accent-brand-secondary" />
+
             Owner
           </label>
 
@@ -89,8 +89,8 @@ const SignupForm = () => {
               name="role"
               value="Tenant"
               onChange={handleChange}
-              className="accent-brand-primary mr-2 scale-125 dark:accent-brand-secondary"
-            />
+              className="accent-brand-primary mr-2 scale-125 dark:accent-brand-secondary" />
+
             Tenant
           </label>
         </div>
@@ -102,8 +102,8 @@ const SignupForm = () => {
             placeholder="Full Name"
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 text-sm rounded-xl bg-white border border-gray-200 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary"
-          />
+            className="w-full px-4 py-3 text-sm rounded-xl bg-white border border-gray-200 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary" />
+
 
           <input
             type="text"
@@ -111,8 +111,8 @@ const SignupForm = () => {
             placeholder="Username"
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 text-sm rounded-xl bg-white border border-gray-200 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary"
-          />
+            className="w-full px-4 py-3 text-sm rounded-xl bg-white border border-gray-200 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary" />
+
 
           <input
             type="email"
@@ -120,8 +120,8 @@ const SignupForm = () => {
             placeholder="Email Address"
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 text-sm rounded-xl bg-white border border-gray-200 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary"
-          />
+            className="w-full px-4 py-3 text-sm rounded-xl bg-white border border-gray-200 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary" />
+
 
           <input
             type="password"
@@ -129,8 +129,8 @@ const SignupForm = () => {
             placeholder="Password"
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 text-sm rounded-xl bg-white border border-gray-200 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary"
-          />
+            className="w-full px-4 py-3 text-sm rounded-xl bg-white border border-gray-200 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary" />
+
 
           <input
             type="password"
@@ -138,13 +138,13 @@ const SignupForm = () => {
             placeholder="Confirm Password"
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 text-sm rounded-xl bg-white border border-gray-200 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary"
-          />
+            className="w-full px-4 py-3 text-sm rounded-xl bg-white border border-gray-200 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 bg-white dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:border-brand-secondary" />
+
 
           <button
             type="submit"
-            className="w-full mt-2 p-3 text-[15px] font-bold bg-brand-primary text-white border-none rounded-xl cursor-pointer transition duration-300 hover:bg-brand-accent shadow-lg shadow-brand-primary/30 dark:bg-brand-secondary dark:text-brand-surface-dark dark:hover:bg-white dark:shadow-none"
-          >
+            className="w-full mt-2 p-3 text-[15px] font-bold bg-brand-primary text-white border-none rounded-xl cursor-pointer transition duration-300 hover:bg-brand-accent shadow-lg shadow-brand-primary/30 dark:bg-brand-secondary dark:text-brand-surface-dark dark:hover:bg-white dark:shadow-none">
+
             Sign Up
           </button>
         </form>
@@ -155,8 +155,8 @@ const SignupForm = () => {
           Already have an account? <a href="/login" className="text-brand-primary font-semibold hover:underline dark:text-brand-secondary">Login here</a>
         </p>
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default SignupForm;

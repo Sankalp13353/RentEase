@@ -17,7 +17,7 @@ const OwnerAddProperty = () => {
     bathrooms: "",
     area_sqft: "",
     rent: "",
-    available_from: "",
+    available_from: ""
   });
 
   const [loading, setLoading] = useState(false);
@@ -45,7 +45,7 @@ const OwnerAddProperty = () => {
       bathrooms: Number(formData.bathrooms) || 0,
       area_sqft: Number(formData.area_sqft) || 0,
       rent: formData.rent ? Number(formData.rent) : null,
-      available_from: formData.available_from || null,
+      available_from: formData.available_from || null
     };
 
     const response = await createHouse(payload);
@@ -146,15 +146,15 @@ const OwnerAddProperty = () => {
             <button
               type="submit"
               disabled={loading}
-              className="mt-6 w-full p-4 bg-brand-primary text-white font-bold rounded-xl hover:bg-brand-accent transition duration-200 disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-brand-primary/30 dark:bg-brand-secondary dark:text-brand-surface-dark dark:hover:bg-white dark:shadow-none"
-            >
+              className="mt-6 w-full p-4 bg-brand-primary text-white font-bold rounded-xl hover:bg-brand-accent transition duration-200 disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-brand-primary/30 dark:bg-brand-secondary dark:text-brand-surface-dark dark:hover:bg-white dark:shadow-none">
+
               {loading ? "Adding Property..." : "Add Property"}
             </button>
           </form>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default OwnerAddProperty;
