@@ -9,12 +9,17 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.SERVER_PORT || 5000;
 
+
 app.use(corsMiddleware);
+
+
 app.use(express.json());
+
 
 app.use("/api/users", usersRouter);
 app.use("/api/houses", houseRoutes);
 app.use("/api/interests", interestRoutes);
+
 
 app.get("/", (req, res) => {
   res.status(200).send("<h1>RentEase Backend Running Successfully 🚀</h1>");
