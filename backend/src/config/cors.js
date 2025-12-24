@@ -7,6 +7,8 @@ const allowedOrigins = [
   process.env.FRONTEND_SERVER_URL   
 ].filter(Boolean); 
 
+
+
 const corsOptions = {
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
